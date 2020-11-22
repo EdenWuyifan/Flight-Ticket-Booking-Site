@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, url_for, redirect, session
 import mysql.connector
 
 #Initialize the app from Flask
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path="/",
+            static_folder="static")
 
 #Configure MySQL
 conn = mysql.connector.connect(host='localhost',
