@@ -11,7 +11,7 @@ conn = mysql.connector.connect(host='localhost',
                        user='root',
                        password='root',
                        database='blog',
-                       port=8889)
+                       port=1024)
 
 
 #Define a route to hello function

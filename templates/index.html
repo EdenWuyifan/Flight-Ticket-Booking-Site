@@ -4,56 +4,9 @@
 <head>
 	<title>Bailey & Eden Airlines Official Website</title>
 
-	<style type="text/css">
-		@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;700&display=swap');
-		
-		a:link { text-decoration: none;color: white}
-		a:active { text-decoration:blink}
-		a:hover { text-decoration:none;color: grey}
-		a:visited { text-decoration: none;color: grey}
+	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="/css/header_style.css" rel="stylesheet"/>
 
-		header {
-			z-index: 1;
-			background-color: #000;
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			height: 100px;
-			margin-bottom: 20px;
-		}
-		header *{
-			display: inline-block;
-		}
-		.header-buttons {
-			margin: 0;
-			float: right;
-		}
-		header ul{
-			margin-right: 30px;
-		}
-		header li{
-			width: 100px;
-			height: 50px;
-			line-height: 50px;
-			text-align: center;
-			font-family: 'Teko', sans-serif;
-			font-size: 30px;
-			color: white;
-		}
-		header h1 {
-			font-size: 50px;
-			font-family: 'Teko', sans-serif;
-			font-weight: bold;
-			color: white;
-			margin: 14px;
-			text-align: center;
-		}
-		header image {
-			height: 80px;
-		}
-		
-	</style>
 </head>
 
 <body>
@@ -95,10 +48,6 @@
 										<input type="radio" id="one-way" name="flight-type">
 										<span></span>One way
 									</label>
-									<label for="multi-city">
-										<input type="radio" id="multi-city" name="flight-type">
-										<span></span>Multi-City
-									</label>
 								</div>
 							</div>
 							<div class="form-group">
@@ -112,14 +61,14 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<input class="form-control" type="date">
-										<span class="form-label">Check In</span>
+										<input id="DepartureDate" class="form-control" type="date">
+										<span class="form-label">Departure Date</span>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<input class="form-control" type="date">
-										<span class="form-label">Check Out</span>
+										<input id="ReturningDate" class="form-control" type="date">
+										<span class="form-label">Returning Date</span>
 									</div>
 								</div>
 							</div>
@@ -174,6 +123,7 @@
 			z-index: 0;
 			position: relative;
 			height: 100vh;
+			display: inline-block;
 		}
 
 		.section .section-center {
@@ -212,8 +162,10 @@
 		}
 
 		.booking-form .form-group {
+			display: inline-block;
 			position: relative;
 			margin-bottom: 30px;
+			width: 250px;
 		}
 
 		.booking-form .form-control {
@@ -351,7 +303,7 @@
 			padding: 0px 50px;
 		}
 	</style>
-	<script src="js/jquery.min.js"></script>
+	<script src="/js/jquery.min.js"></script>
 	<script>
 		$('.form-control').each(function () {
 			floatedLabel($(this));
