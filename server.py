@@ -1,25 +1,26 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import mysql.connector
+import sys
 
 #Initialize the app from Flask
 app = Flask(__name__,
-            static_url_path="/",
-            static_folder="static")
+	static_url_path="/",
+	static_folder="static")
 
 #Configure MySQL
 conn = mysql.connector.connect(host='localhost',
-                       user='root',
-                       password='root',
-                       database='blog',
-                       port=1024)
+	user='root',
+	password='root',
+	database='Airtickets',
+	port=8889)
 
 
 #Define a route to hello function
 @app.route('/')
 def hello():
-    if 'username' in session:
-        return redirect(url_for('home'))
-    return render_template('index.html')
+	if 'email' in session:
+		return redirect(url_for('home'))
+	return render_template('index.html')
 
 #Define route for login
 @app.route('/login')
@@ -35,14 +36,14 @@ def register():
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
 	#grabs information from the forms
-	username = request.form['username']
+	email = request.form['email']
 	password = request.form['password']
 
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
-	query = "SELECT * FROM user WHERE username = '{}' and password = '{}'"
-	cursor.execute(query.format(username, password))
+	query = "SELECT * FROM Customer WHERE email = '{}' and password = '{}'"
+	cursor.execute(query.format(email, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
 	#use fetchall() if you are expecting more than 1 data row
@@ -51,7 +52,7 @@ def loginAuth():
 	if(data):
 		#creates a session for the the user
 		#session is a built in
-		session['username'] = username
+		session['email'] = email
 		return redirect(url_for('home'))
 	else:
 		#returns an error message to the html page
@@ -61,54 +62,76 @@ def loginAuth():
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
-	#grabs information from the forms
+    #grabs information from the forms
+	email = request.form['email']
 	username = request.form['username']
 	password = request.form['password']
+	building_num = request.form['buildingnum']
+	if building_num == "": building_num=None
+	street = request.form['street']
+	if street == "": street=None
+	city = request.form['city']
+	if city == "": city=None
+	state = request.form['state']
+	if state == "": state=None
+	phone_num = request.form['phonenumber']
+	if phone_num == "": phone_num=None
+	passport_number = request.form['passportnumber']
+	if passport_number == "": passport_number=None
+	passport_expiration = request.form['passportexpiration']
+	if passport_expiration == "": passport_expiration=None
+	passport_country = request.form['passportcountry']
+	if passport_country == "": passport_country=None
+	date_of_birth = request.form['dob']
+	if date_of_birth == "": date_of_birth=None
 
-	#cursor used to send queries
+	print(email, username, password, building_num, street, city, state, phone_num, passport_country, passport_expiration, passport_country, date_of_birth, file=sys.stdout)
+    #cursor used to send queries
 	cursor = conn.cursor()
-	#executes query
-	query = "SELECT * FROM user WHERE username = '{}'"
-	cursor.execute(query.format(username))
-	#stores the results in a variable
+    #executes query
+	query = "SELECT * FROM Customer WHERE email = '{}'"
+	cursor.execute(query.format(email))
+    #stores the results in a variable
 	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
+    #use fetchall() if you are expecting more than 1 data row
 	error = None
 	if(data):
-		#If the previous query returns data, then user exists
+	#If the previous query returns data, then user exists
 		error = "This user already exists"
 		return render_template('register.html', error = error)
 	else:
-		ins = "INSERT INTO user VALUES('{}', '{}')"
-		cursor.execute(ins.format(username, password))
+		ins = "INSERT INTO Customer VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+		cursor.execute(ins.format(email, username, password, building_num, street, city, state, phone_num, passport_number, passport_expiration, passport_country, date_of_birth))
 		conn.commit()
 		cursor.close()
 		return render_template('index.html')
 
+'''
 @app.route('/home')
 def home():
-    username = session['username']
+    email = session['email']
     cursor = conn.cursor();
     query = "SELECT ts, blog_post FROM blog WHERE username = '{}' ORDER BY ts DESC"
     cursor.execute(query.format(username))
     data1 = cursor.fetchall() 
     cursor.close()
-    return render_template('home.html', username=username, posts=data1)
+    return render_template('home.html', email=username, posts=data1)
 	
 @app.route('/post', methods=['GET', 'POST'])
 def post():
-	username = session['username']
+	email = session['email']
 	cursor = conn.cursor();
 	blog = request.form['blog']
-	query = "INSERT INTO blog (blog_post, username) VALUES('{}', '{}')"
+	query = "INSERT INTO blog (blog_post, email) VALUES('{}', '{}')"
 	cursor.execute(query.format(blog, username))
 	conn.commit()
 	cursor.close()
 	return redirect(url_for('home'))
+'''
 
 @app.route('/logout')
 def logout():
-	session.pop('username')
+	session.pop('email')
 	return redirect('/')
 	
 app.secret_key = 'some key that you will never guess'

@@ -3,8 +3,18 @@
 </head>
 <body>
 <form action="/registerAuth" method="POST">
+	<input type="email" name = "email" placeholder="email" required/> </br>
 	<input type="text" name = "username" placeholder="username" required/> </br>
 	<input type="password" name = "password" placeholder="password" required/></br>
+	<input type="number" name = "buildingnum" placeholder="building number"/> </br>
+	<input type="text" name = "street" placeholder="street"/> </br>
+	<input type="text" name = "city" placeholder="city"/> </br>
+	<input type="text" name = "state" placeholder="state"/> </br>
+	<input type="number" name = "phonenumber" placeholder="phone number"/> </br>
+	<input type="text" name = "passportnumber" placeholder="passport number"/> </br>
+	<input type="date" name = "passportexpiration" placeholder="passport expiration"/> </br>
+	<input type="text" name = "passportcountry" placeholder="passport country"/> </br>
+	<input type="date" name = "dob" placeholder="date of birth"/> </br>
 	<input type="submit" value = Register />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
