@@ -1,7 +1,8 @@
 <html>
 <head>
+	<title>Please Login First</title>
 	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
-	<link rel="stylesheet" href='/css/header_style.css'>
+	<link href="/css/header_style.css" rel="stylesheet"/>
 </head>
 <body>
 	<header>
@@ -13,41 +14,79 @@
 		<div class="header-buttons">
 		<ul>
 			<li></li>
-			<li></li>
 			<li><a href="/register">Register</a></li>
+			<li><a href="/">Go back</a></li>
 		</ul>
 		</div>
 	</header>
-<!--form action="/loginAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Login />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form-->
+	
+
+<script>
+	window.onload = function() {
+		document.getElementsByName("username")[0].style.display = 'none';
+		document.getElementsByName("username")[0].required = false;
+		document.getElementsByName("email")[0].style.display = 'inline-block';
+	}
+
+	function radioCheck() {
+		if(document.getElementById('AirlineStaff').checked) {
+			document.getElementsByName("username")[0].style.display = "inline-block";
+			document.getElementsByName("username")[0].required = true;
+			document.getElementsByName("email")[0].style.display = "none";
+			document.getElementsByName("email")[0].required = false;
+		}
+		else {
+			document.getElementsByName("username")[0].style.display = "none";
+			document.getElementsByName("username")[0].required = false;
+			document.getElementsByName("email")[0].style.display = "inline-block";
+			document.getElementsByName("email")[0].required = true;
+		}
+	}
+</script>
+
 <div id="booking" class="section">
 	<div class="section-center">
 		<div class="container">
 			<div class="row">
 				<div class="booking-form">
 					<div class="form-header">
-						<h1>Login</h1>
+						<h1>Welcome Aboard</h1>
 					</div>
 					<form action="/loginAuth" method="POST">
 						<div class="form-group">
-							<input class="form-control" type="text" name = "username" required/>
+							<div class="form-checkbox">
+								<label for="Customer">
+									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()">
+									<span></span>Customer
+								</label>
+								<label for="BookingAgent">
+									<input type="radio" id="BookingAgent" name="login-type" value="BookingAgent" onclick="javascript:radioCheck()">
+									<span></span>Booking Agent
+								</label>
+								<label for="AirlineStaff">
+									<input type="radio" id="AirlineStaff" name="login-type" value="AirlineStaff" onclick="javascript:radioCheck()">
+									<span></span>Airline Staff
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<input class="form-control" type="text" name="email" required/>
+							<span class="form-label">Email</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control" type="text" name="username" required/>
 							<span class="form-label">Username</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control" type="password" name = "password" required/>
+							<input class="form-control" type="password" name="password" required/>
 							<span class="form-label">Password</span>
 						</div>
-						
-						
 						<div class="form-btn">
-							<button class="submit-btn">Continue</button>
+							<button class="submit-btn">Login</button>
 						</div>
+						{% if error %}
+							<p class="error"><strong>Error:</strong> {{error}}</p>
+						{% endif %}
 					</form>
 				</div>
 			</div>
@@ -56,6 +95,11 @@
 </div>
 
 <style type="text/css">
+	form {
+		width: 100%;
+		margin: 0;
+	}
+
 	.section {
 		margin-top: 400px;
 		z-index: 0;
@@ -100,10 +144,8 @@
 	}
 
 	.booking-form .form-group {
-		display: inline-block;
 		position: relative;
 		margin-bottom: 30px;
-		width: 250px;
 	}
 
 	.booking-form .form-control {
@@ -241,27 +283,26 @@
 		padding: 0px 50px;
 	}
 </style>
-<script src="/js/jquery.min.js"></script>
-	<script>
-		$('.form-control').each(function () {
-			floatedLabel($(this));
-		});
 
-		$('.form-control').on('input', function () {
-			floatedLabel($(this));
-		});
+<script>
+	$('.form-control').each(function () {
+		floatedLabel($(this));
+	});
 
-		function floatedLabel(input) {
-			var $field = input.closest('.form-group');
-			if (input.val()) {
-				$field.addClass('input-not-empty');
-			} else {
-				$field.removeClass('input-not-empty');
-			}
+	$('.form-control').on('input', function () {
+		floatedLabel($(this));
+	});
+
+	function floatedLabel(input) {
+		var $field = input.closest('.form-group');
+		if (input.val()) {
+			$field.addClass('input-not-empty');
+		} else {
+			$field.removeClass('input-not-empty');
 		}
-	</script>
-
-<a href="/">Go back</a>
+	}
+</script>
+<script src="/js/jquery.min.js"></script>
 
 </body>
 

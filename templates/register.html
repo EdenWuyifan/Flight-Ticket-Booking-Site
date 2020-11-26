@@ -1,7 +1,429 @@
 <html>
 <head>
+	<title>Please Login First</title>
+	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="/css/header_style.css" rel="stylesheet"/>
 </head>
 <body>
+	<header>
+		<div class="header-title">
+			<img src="/">
+			<h1>B&E AIRLINES</h1>
+		</div>
+
+		<div class="header-buttons">
+		<ul>
+			<li></li>
+			<li><a href="/register">Register</a></li>
+			<li><a href="/">Go back</a></li>
+		</ul>
+		</div>
+	</header>
+	
+
+<script>
+	window.onload = function() {
+		var C_regis = document.getElementsByClassName("Customer_regi");
+		for(var i=0; i<C_regis.length; i++) {
+    		C_regis[i].style.display = 'inline-block';
+		}
+		var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
+		for(var i=0; i<AS_regis.length; i++) {
+    		AS_regis[i].style.display = 'none';
+		}
+		var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
+		for(var i=0; i<BA_regis.length; i++) {
+    		BA_regis[i].style.display = 'none';
+		}
+	}
+
+	function radioCheck() {
+		if(document.getElementById('AirlineStaff').checked) {
+			var C_regis = document.getElementsByClassName("Customer_regi");
+			for(var i=0; i<C_regis.length; i++) {
+				C_regis[i].style.display = 'none';
+			}
+			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
+			for(var i=0; i<AS_regis.length; i++) {
+				AS_regis[i].style.display = 'inline-block';
+			}
+			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
+			for(var i=0; i<BA_regis.length; i++) {
+				BA_regis[i].style.display = 'none';
+			}
+		}
+		else if(document.getElementById('Customer').checked) {
+			var C_regis = document.getElementsByClassName("Customer_regi");
+			for(var i=0; i<C_regis.length; i++) {
+				C_regis[i].style.display = 'inline-block';
+			}
+			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
+			for(var i=0; i<AS_regis.length; i++) {
+				AS_regis[i].style.display = 'none';
+			}
+			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
+			for(var i=0; i<BA_regis.length; i++) {
+				BA_regis[i].style.display = 'none';
+			}
+		}
+		else {
+			var C_regis = document.getElementsByClassName("Customer_regi");
+			for(var i=0; i<C_regis.length; i++) {
+				C_regis[i].style.display = 'none';
+			}
+			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
+			for(var i=0; i<AS_regis.length; i++) {
+				AS_regis[i].style.display = 'none';
+			}
+			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
+			for(var i=0; i<BA_regis.length; i++) {
+				BA_regis[i].style.display = 'inline-block';
+			}
+		}
+	}
+</script>
+
+<div id="booking" class="section">
+	<div class="section-center">
+		<div class="container">
+			<div class="row">
+				<div class="booking-form">
+					<div class="form-header">
+						<h1>Welcome Aboard</h1>
+					</div>
+					<form action="/loginAuth" method="POST">
+						<div class="form-group">
+							<div class="form-checkbox">
+								<label for="Customer">
+									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()" checked>
+									<span></span>Customer
+								</label>
+								<label for="BookingAgent">
+									<input type="radio" id="BookingAgent" name="login-type" value="BookingAgent" onclick="javascript:radioCheck()">
+									<span></span>Booking Agent
+								</label>
+								<label for="AirlineStaff">
+									<input type="radio" id="AirlineStaff" name="login-type" value="AirlineStaff" onclick="javascript:radioCheck()">
+									<span></span>Airline Staff
+								</label>
+							</div>
+						</div>
+						<!--Customer-->
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name="email" required/>
+							<span class="form-label">Email</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "username" required/> 
+							<span class="form-label">Username</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="password" name = "password"  required/>
+							<span class="form-label">Password</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="number" name = "buildingnum" /> 
+							<span class="form-label">Building Number</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "street" /> 
+							<span class="form-label">Street</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "city" /> 
+							<span class="form-label">City</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "state" /> 
+							<span class="form-label">State</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="number" name = "phonenumber" /> 
+							<span class="form-label">Phone Number</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "passportnumber" /> 
+							<span class="form-label">Passport Number</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="date" name = "passportexpiration" /> 
+							<span class="form-label">Passport Expiration</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="text" name = "passportcountry" /> 
+							<span class="form-label">Passport Country</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Customer_regi" type="date" name = "dob" /> 
+							<span class="form-label">Date of Birth</span>
+						</div>
+						<!--Booking Agent-->
+						<div class="form-group">
+							<input class="form-control Booking_Agent_regi" type="text" name="email" required/>
+							<span class="form-label">Email</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Booking_Agent_regi" type="password" name="password" required/>
+							<span class="form-label">Password</span>
+						</div>
+						<!--Airline Staff-->
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="text" name="username" required/>
+							<span class="form-label">Username</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="password" name="password" required/>
+							<span class="form-label">Password</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="text" name="first_name" required/>
+							<span class="form-label">First Name</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="text" name="last_name" required/>
+							<span class="form-label">Last Name</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="date" name = "dob" required/> 
+							<span class="form-label">Date of Birth</span>
+						</div>
+						<div class="form-group">
+							<input class="form-control Airline_Staff_regi" type="text" name="airline_name" required/>
+							<span class="form-label">Airline Name</span>
+						</div>
+
+						<div class="form-btn">
+							<button class="submit-btn">Login</button>
+						</div>
+						{% if error %}
+							<p class="error"><strong>Error:</strong> {{error}}</p>
+						{% endif %}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	form {
+		width: 100%;
+		margin: 0;
+	}
+
+	.section {
+		margin-top: 400px;
+		z-index: 0;
+		position: relative;
+		height: 100vh;
+		display: inline-block;
+	}
+
+	.section .section-center {
+		position: relative;
+		top: 50%;
+		left: 0;
+		right: 0;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+	}
+
+	#booking {
+		font-family: 'Teko', sans-serif;
+	}
+
+	.booking-form {
+		padding: 0px 40px 40px;
+		max-width: 642px;
+		width: 100%;
+		margin: auto;
+		background: #2d343b;
+	}
+
+	.booking-form .form-header {
+		padding: 40px;
+		margin: 0px -40px 30px;
+		background: #1a1f24;
+	}
+
+	.booking-form .form-header h1 {
+		font-weight: 700;
+		text-transform: capitalize;
+		font-size: 38px;
+		margin: 0;
+		color: #fff;
+	}
+
+	.booking-form .form-group {
+		position: relative;
+		margin-bottom: 30px;
+	}
+
+	.booking-form .form-control {
+		background-color: #1c2126;
+		height: 50px;
+		padding: 7px 20px 0px;
+		border: none;
+		border-radius: 0px;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		color: #fff;
+	}
+
+	.booking-form select.form-control {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+	}
+
+	.booking-form select.form-control+.select-arrow {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		width: 24px;
+		text-align: center;
+		pointer-events: none;
+		height: 50px;
+		line-height: 50px;
+		color: #2d343b;
+		font-size: 14px;
+	}
+
+	.booking-form select.form-control+.select-arrow:after {
+		content: '\279C';
+		display: block;
+		-webkit-transform: rotate(90deg);
+		transform: rotate(90deg);
+	}
+
+	.booking-form .form-label {
+		position: absolute;
+		top: 15px;
+		left: 20px;
+		text-transform: uppercase;
+		color: #2d343b;
+		font-weight: 400;
+		line-height: 24px;
+		height: 24px;
+		font-size: 16px;
+		pointer-events: none;
+		-webkit-transition: 0.2s all;
+		transition: 0.2s all;
+	}
+
+	.booking-form .form-group.input-not-empty .form-label {
+		top: -10px;
+		color: #fff;
+		font-size: 14px;
+	}
+
+	.booking-form .form-group:not( .input-not-empty) .form-control:not( :focus) {
+		color: transparent;
+	}
+
+	.booking-form .form-group .form-control:focus+.form-label {
+		top: -10px;
+		color: #fff;
+		font-size: 14px;
+	}
+
+	.booking-form .form-checkbox input {
+		position: absolute !important;
+		margin-left: -9999px !important;
+		visibility: hidden !important;
+	}
+
+	.booking-form .form-checkbox label {
+		position: relative;
+		padding-top: 4px;
+		padding-left: 30px;
+		color: #fff;
+		font-weight: 400;
+	}
+
+	.booking-form .form-checkbox label+label {
+		margin-left: 15px;
+	}
+
+	.booking-form .form-checkbox input+span {
+		position: absolute;
+		left: 2px;
+		top: 4px;
+		width: 20px;
+		height: 20px;
+		border: 2px solid #1c2126;
+		background: #1c2126;
+		border-radius: 50%;
+	}
+
+	.booking-form .form-checkbox input:checked+span {
+		border-color: #f7c411;
+	}
+
+	.booking-form .form-checkbox input+span:after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0px;
+		height: 0px;
+		border-radius: 50%;
+		background-color: #f7c411;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		-webkit-transition: 0.2s all;
+		transition: 0.2s all;
+	}
+
+	.booking-form .form-checkbox input:not(:checked)+span:after {
+		opacity: 0;
+	}
+
+	.booking-form .form-checkbox input:checked+span:after {
+		opacity: 1;
+		width: 10px;
+		height: 10px;
+	}
+
+	.booking-form .submit-btn {
+		color: #1c2126;
+		background-color: #f7c411;
+		font-weight: 400;
+		height: 50px;
+		border: none;
+		padding: 0px 50px;
+	}
+</style>
+
+<script>
+	$('.form-control').each(function () {
+		floatedLabel($(this));
+	});
+
+	$('.form-control').on('input', function () {
+		floatedLabel($(this));
+	});
+
+	function floatedLabel(input) {
+		var $field = input.closest('.form-group');
+		if (input.val()) {
+			$field.addClass('input-not-empty');
+		} else {
+			$field.removeClass('input-not-empty');
+		}
+	}
+</script>
+<script src="/js/jquery.min.js"></script>
+
+</body>
+
+
+</html>
+
+
+
+
+<!--
 <form action="/registerAuth" method="POST">
 	<input type="email" name = "email" placeholder="email" required/> </br>
 	<input type="text" name = "username" placeholder="username" required/> </br>
@@ -21,5 +443,5 @@
 	{% endif %}
 </form>
 <a href="/">Go back</a>
-</body>
-</html>
+
+-->

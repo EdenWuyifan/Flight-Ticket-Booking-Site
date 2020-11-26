@@ -36,28 +36,49 @@ def register():
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
 	#grabs information from the forms
-	email = request.form['email']
-	password = request.form['password']
+	login_type = request.form['login-type']
 
-	#cursor used to send queries
-	cursor = conn.cursor()
-	#executes query
-	query = "SELECT * FROM Customer WHERE email = '{}' and password = '{}'"
-	cursor.execute(query.format(email, password))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
-	error = None
-	if(data):
-		#creates a session for the the user
-		#session is a built in
-		session['email'] = email
-		return redirect(url_for('home'))
+	if login_type == 'AirlineStaff':
+		username = request.form['username']
+		password = request.form['password']
+
+		cursor = conn.cursor()
+		query = "SELECT * FROM {} WHERE username = '{}' and pwd = '{}'"
+		cursor.execute(query.format(login_type, username, password))
+
+		data = cursor.fetchone()
+		cursor.close()
+		error = None
+		if(data):
+			session['username'] = username
+			return redirect(url_for('home'))
+		else:
+			error = 'Invalid login or username'
+			return render_template('login.html', error=error)
 	else:
-		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
+		email = request.form['email']
+		password = request.form['password']
+
+		#cursor used to send queries
+		cursor = conn.cursor()
+		#executes query
+		query = "SELECT * FROM {} WHERE email = '{}' and pwd = '{}'"
+		cursor.execute(query.format(login_type, email, password))
+		#stores the results in a variable
+		data = cursor.fetchone()
+		#use fetchall() if you are expecting more than 1 data row
+		cursor.close()
+		error = None
+		if(data):
+			#creates a session for the the user
+			#session is a built in
+			session['email'] = email
+			return redirect(url_for('home'))
+		else:
+			#returns an error message to the html page
+			error = 'Invalid login or username'
+			return render_template('login.html', error=error)
+
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
@@ -106,17 +127,17 @@ def registerAuth():
 		cursor.close()
 		return render_template('index.html')
 
-'''
+
 @app.route('/home')
 def home():
     email = session['email']
-    cursor = conn.cursor();
-    query = "SELECT ts, blog_post FROM blog WHERE username = '{}' ORDER BY ts DESC"
-    cursor.execute(query.format(username))
+    cursor = conn.cursor()
+    query = "SELECT * FROM purchases WHERE C_email = '{}' ORDER BY C_email DESC"
+    cursor.execute(query.format(email))
     data1 = cursor.fetchall() 
     cursor.close()
-    return render_template('home.html', email=username, posts=data1)
-	
+    return render_template('home.html', email=email, posts=data1)
+'''
 @app.route('/post', methods=['GET', 'POST'])
 def post():
 	email = session['email']
@@ -139,4 +160,4 @@ app.secret_key = 'some key that you will never guess'
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
 if __name__ == "__main__":
-	app.run('127.0.0.1', 8888, debug = True)
+	app.run('127.0.0.1', 5000, debug = True)
