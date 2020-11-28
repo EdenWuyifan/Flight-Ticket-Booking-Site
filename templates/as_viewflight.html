@@ -5,6 +5,7 @@
     
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
     
 </head>
 
@@ -17,51 +18,63 @@
     
         <div class="header-buttons">
         <ul>
-            <li><a href="/login">Chart</a></li>
+            <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
             <li><a href="/logout">Logout</a></li>
         </ul>
         </div>
     </header>
 
-<form action="/post" method="POST">
-	<h1>Welcome {{username}}</h1>
-	<input type="text" name = "blog" placeholder="your post" required/> </br>
-	<input type="submit" value = Post />
-</form>
 
-<style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-</style>
+<div class="container">
 
-<table>
-	<th>Airline</th>
-    <th>Flight</th>
-    <th>Depart Airport</th>
-    <th>Depart Time</th>
-    <th>Destination</th>
-    <th>Arrival Time</th>
-    <th>Price</th>
-    <th>Status</th>
-    <th>Airplane ID</th>
+    <div class="navbar">
+        <ul>
+            <li><a>View My Flight</a></li>
+            <li><a href="">Create New Flight</a></li>
+            <li><a href="">Change status</a></li>
+            <li><a href="">Change status</a></li>
+            <li><a href="">Change status</a></li>
+            <li><a href="">Change status</a></li>
+            <li><a href="">Change status</a></li>
+            <li><a href="">Change status</a></li>
+        </ul>
+    </div>
 
-{% for line in datas %}
-	<tr>
-		<td>{{line[0]}}</td>
-        <td>{{line[1]}}</td>
-        <td>{{line[2]}}</td>
-        <td>{{line[3]}}</td>
-        <td>{{line[4]}}</td>
-        <td>{{line[5]}}</td>
-        <td>{{line[6]}}</td>
-        <td>{{line[7]}}</td>
-        <td>{{line[8]}}</td>
-		
-	</tr>
-{% endfor %}
-</table>
+    <form class="search" action="/sViewFlight" method="POST">
+        <input type="date" name = "start" placeholder="From" required/>
+        <span class="form-label">From:</span>
+        <input type="date" name = "end" placeholder="To" required/>
+        <span class="form-label">To:</span>
+        <input type="submit" value = Check />
+    </form>
 
+    <table class="data-showcase">
+        <th>Airline</th>
+        <th>Flight</th>
+        <th>Depart Airport</th>
+        <th>Depart Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Airplane ID</th>
+
+    {% for line in datas %}
+        <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+            <td>{{line[6]}}</td>
+            <td>{{line[7]}}</td>
+            <td>{{line[8]}}</td>
+            
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 
 </body>
 

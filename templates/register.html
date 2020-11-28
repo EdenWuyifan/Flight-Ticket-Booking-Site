@@ -3,6 +3,7 @@
 	<title>Please Login First</title>
 	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
 	<link href="/css/header_style.css" rel="stylesheet"/>
+	<link href="/css/body_style.css" rel="stylesheet"/>
 </head>
 <body>
 	<header>
@@ -13,8 +14,8 @@
 
 		<div class="header-buttons">
 		<ul>
-			<li></li>
-			<li><a href="/register">Register</a></li>
+			<li><a href="/">Test</a></li>
+			<li><a href="/login">Login</a></li>
 			<li><a href="/">Go back</a></li>
 		</ul>
 		</div>
@@ -222,22 +223,15 @@
 		width: 100%;
 		margin: 0;
 	}
-
+	.row {
+		padding-top: 0px;
+	}
 	.section {
-		margin-top: 400px;
+		margin-top: 50px;
 		z-index: 0;
 		position: relative;
-		height: 100vh;
+		height: 100%;
 		display: inline-block;
-	}
-
-	.section .section-center {
-		position: relative;
-		top: 50%;
-		left: 0;
-		right: 0;
-		-webkit-transform: translateY(-50%);
-		transform: translateY(-50%);
 	}
 
 	#booking {

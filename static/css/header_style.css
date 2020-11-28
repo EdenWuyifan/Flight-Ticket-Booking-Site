@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300;400;700&display=swap');
 		
 a:link { text-decoration: none;color: white}
 a:active { text-decoration:blink}
@@ -8,24 +8,20 @@ a:visited { text-decoration: none;color: grey}
 header {
 	z-index: 1;
 	background-color: #000;
-	position: fixed;
+	position: relative;
 	top: 0;
 	left: 0;
 	right: 0;
 	height: 100px;
-	margin-bottom: 20px;
 }
 header *{
 	display: inline-block;
 }
-.header-buttons {
-	margin: 20;
-	height: 100%;
-	float: right;
-	padding-top: 20px;
-}
 header ul{
-	margin: 0;
+	margin: 20px;
+}
+.header-buttons {
+	float: right;
 }
 header li{
 	padding-top: 0;
@@ -50,6 +46,3 @@ header image {
 	height: 80px;
 }
 
-body {
-	text-align: center;
-}
