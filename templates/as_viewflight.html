@@ -1,7 +1,28 @@
 <html>
+
 <head>
+    <title>Airline Staff Portal</title>
+    
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/header_style.css" rel="stylesheet"/>
+    
 </head>
+
 <body>
+    <header>
+        <div class="header-title">
+            <img src="/">
+            <h1>B&E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li><a href="/login">Chart</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
 <form action="/post" method="POST">
 	<h1>Welcome {{username}}</h1>
 	<input type="text" name = "blog" placeholder="your post" required/> </br>
@@ -18,16 +39,22 @@
 	<th>Time</th>
 	<th>Post</th>
 
-{% for line in posts %}
+{% for line in datas %}
 	<tr>
 		<td>{{line[0]}}</td>
-		<td>{{line[1]}}</td>
+        <td>{{line[1]}}</td>
+        <td>{{line[2]}}</td>
+        <td>{{line[3]}}</td>
+        <td>{{line[4]}}</td>
+        <td>{{line[5]}}</td>
+        <td>{{line[6]}}</td>
+        <td>{{line[7]}}</td>
+        <td>{{line[8]}}</td>
 		
 	</tr>
 {% endfor %}
 </table>
 
-<a href="/logout">Logout</a>
 
 </body>
 

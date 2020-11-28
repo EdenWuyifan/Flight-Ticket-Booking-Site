@@ -51,7 +51,7 @@ def loginAuth():
 		error = None
 		if(data):
 			session['username'] = username
-			return redirect(url_for('home'))
+			return redirect(url_for('sViewFlight'))
 		else:
 			error = 'Invalid login or username'
 			return render_template('login.html', error=error)
@@ -173,25 +173,43 @@ def home():
     cursor.close()
     return render_template('home.html', email=email, posts=data1)
 
+#Match input of city/airport to the corresponding airport
+@app.route('/airport')
+def airport(name):
+	cursor = conn.cursor()
+	query = "SELECT airport_name FROM airport WHERE airport_name = '{}'"
+	cursor.execute(query.format(name))
+	data = cursor.fetchone()
+	if data: # if the input is a airport name
+  		cursor.close()
+  		return(name)
+	else:
+  		query = "SELECT airport_name FROM airport WHERE airport_city = '{}'"
+  		cursor.execute(query.format(name))
+  		data = cursor.fetchone()
+  		cursor.close()
+  		error = None
+  		if data: # if the input is a city name
+   			return(data[0])
+  		else: # if the input is invalid
+   			return error
+
 #Search for upcoming flights
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
-	flight_type = request.form["flight-type"]
-	source = request.form['source']
-	#source_airport = request.form['source-airport']
-	destination = request.form['destination']
-	#destination_airport = request.form['destination-airport']
-	date = request.form['date']
-	if flight_type == "roundtrip":
-		cursor = conn.cursor()
-		query = "SELECT * FROM flight WHERE departure_airport = '{}' and arrival_ariport = '{}' and DATE(departure_time) = {}"
-		cursor.execute(query.format(source, destination, date))
-
-		data = cursor.fetchone()
-		cursor.close()
-		error = None
-
-	return
+ 	source = airport(request.form['source'])
+ 	destination = airport(request.form['destination'])
+ 	date = request.form['date']
+ 	cursor = conn.cursor()
+ 	query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+ 	cursor.execute(query.format(source, destination, date))
+ 	data = cursor.fetchall()
+ 	if request.form['flight-type'] == "roundtrip": # roundtrip
+  		back_date = request.form['back-date']
+  		cursor.execute(query.format(destination, source, back_date))
+  		data.extend(cursor.fetchall())
+ 	cursor.close()
+ 	return render_template('result.html', data=data)
 
 #--------------------------Customer Use Case--------------------------
 @app.route('/cViewFlight')
@@ -229,7 +247,17 @@ def baCustomer():
 #------------------------Ailine Staff Use Case------------------------
 @app.route('/sViewFlight')
 def sViewFlight():
-	return
+	username = session['username']
+	cursor = conn.cursor()
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline_name = cursor.fetchone()[0]
+
+	query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
+	cursor.execute(query.format(airline_name))
+	data1 = cursor.fetchall()
+	cursor.close()
+	return render_template('as_viewflight.html', username=username, datas=data1)
 
 @app.route('/createFlight')
 def createFlight():
