@@ -185,6 +185,97 @@ def home():
     data1 = cursor.fetchall() 
     cursor.close()
     return render_template('home.html', email=email, posts=data1)
+
+#Search for upcoming flights
+@app.route('/search')
+def search():
+	flight_type = request.form["flight-type"]
+	source = request.form['source']
+	#source_airport = request.form['source-airport']
+	destination = request.form['destination']
+	#destination_airport = request.form['destination-airport']
+	date = request.form['date']
+	if flight_type == "roundtrip":
+		cursor = conn.cursor()
+		query = "SELECT * FROM flight WHERE departure_airport = '{}' and arrival_ariport = '{}' and DATE(departure_time) = {}"
+		cursor.execute(query.format(source, destination, date))
+
+		data = cursor.fetchone()
+		cursor.close()
+		error = None
+
+	return
+
+#--------------------------Customer Use Case--------------------------
+@app.route('/cViewFlight')
+def cViewFlight():
+	return
+
+#Customer searches for upcoming flights and purchases tickets
+@app.route('/cPurchase')
+def cPurchase():
+	search()
+	return
+
+@app.route('/cSpending')
+def cSpending():
+	return
+
+#------------------------Booking Agent Use Case------------------------
+@app.route('/baViewFlight')
+def baViewFlight():
+	return
+
+#Booking agent searches for upcoming flights and purchases tickets for other customers
+@app.route('/baPurchase')
+def baPurchase():
+	return
+
+@app.route('/baComission')
+def baComission():
+	return
+
+@app.route('/baCustomer')
+def baCustomer():
+	return
+
+#------------------------Ailine Staff Use Case------------------------
+@app.route('/sViewFlight')
+def sViewFlight():
+	return
+
+@app.route('/createFlight')
+def createFlight():
+	return
+
+@app.route('/changeStatus')
+def changeStatus():
+	return
+
+@app.route('/addAirplane')
+def addAirplane():
+	return
+
+@app.route('/addAirport')
+def addAirport():
+	return
+
+@app.route('/sViewBA')
+def sViewBA():
+	return
+
+@app.route('/sViewCustomer')
+def sViewCustomer():
+	return
+
+@app.route('/sViewReport')
+def sViewReport():
+	return
+
+@app.route('/sViewDestination')
+def sViewDestination():
+	return
+
 '''
 @app.route('/post', methods=['GET', 'POST'])
 def post():
