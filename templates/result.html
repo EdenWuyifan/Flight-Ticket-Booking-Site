@@ -1,13 +1,9 @@
 <html>
-
 <head>
-    <title>Airline Staff Portal</title>
-    
+    <title>Search Results</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
-    
 </head>
-
 <body>
     <header>
         <div class="header-title">
@@ -18,7 +14,8 @@
         <div class="header-buttons">
         <ul>
             <li><a href="/login">Chart</a></li>
-            <li><a href="/logout">Logout</a></li>
+			<li><a href="/login">Login</a></li>
+			<li><a href="/register">Register</a></li>
         </ul>
         </div>
     </header>
@@ -46,7 +43,7 @@
     <th>Status</th>
     <th>Airplane ID</th>
 
-{% for line in datas %}
+{% for line in data %}
 	<tr>
 		<td>{{line[0]}}</td>
         <td>{{line[1]}}</td>
@@ -56,14 +53,9 @@
         <td>{{line[5]}}</td>
         <td>{{line[6]}}</td>
         <td>{{line[7]}}</td>
-        <td>{{line[8]}}</td>
-		
-	</tr>
+        <td>{{line[8]}}</td>     
+    </tr>
 {% endfor %}
 </table>
-
-
 </body>
-
-
 </html>

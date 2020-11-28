@@ -181,45 +181,50 @@ def airport(name):
 	cursor.execute(query.format(name))
 	data = cursor.fetchone()
 	if data: # if the input is a airport name
-  		cursor.close()
-  		return(name)
+		cursor.close()
+		return(name)
 	else:
-  		query = "SELECT airport_name FROM airport WHERE airport_city = '{}'"
-  		cursor.execute(query.format(name))
-  		data = cursor.fetchone()
-  		cursor.close()
-  		error = None
-  		if data: # if the input is a city name
-   			return(data[0])
-  		else: # if the input is invalid
-   			return error
+		query = "SELECT airport_name FROM airport WHERE airport_city = '{}'"
+		cursor.execute(query.format(name))
+		data = cursor.fetchone()
+		cursor.close()
+		error = None
+		if data: # if the input is a city name
+			return(data[0])
+		else: # if the input is invalid
+			return error
 
 #Search for upcoming flights
 @app.route('/search', methods=['GET', 'POST'])
 def search():
- 	source = airport(request.form['source'])
- 	destination = airport(request.form['destination'])
- 	date = request.form['date']
- 	cursor = conn.cursor()
- 	query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
- 	cursor.execute(query.format(source, destination, date))
- 	data = cursor.fetchall()
- 	if request.form['flight-type'] == "roundtrip": # roundtrip
-  		back_date = request.form['back-date']
-  		cursor.execute(query.format(destination, source, back_date))
-  		data.extend(cursor.fetchall())
- 	cursor.close()
- 	return render_template('result.html', data=data)
+	source = airport(request.form['source'])
+	destination = airport(request.form['destination'])
+	date = request.form['date']
+	cursor = conn.cursor()
+	query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+	cursor.execute(query.format(source, destination, date))
+	data = cursor.fetchall()
+	if request.form['flight-type'] == "roundtrip": # roundtrip
+		back_date = request.form['back-date']
+		cursor.execute(query.format(destination, source, back_date))
+		data.extend(cursor.fetchall())
+	cursor.close()
+	return render_template('result.html', data=data)
 
 #--------------------------Customer Use Case--------------------------
 @app.route('/cViewFlight')
 def cViewFlight():
-	return
+	username = session['email']
+	cursor = conn.cursor()
+	query = "SELECT ＊ FROM flight ORDER BY departure_time LIMIT 10"
+	cursor.execute(query)
+	data = cursor.fetchall()
+	cursor.close()
+	return 
 
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchase')
 def cPurchase():
-	search()
 	return
 
 @app.route('/cSpending')
