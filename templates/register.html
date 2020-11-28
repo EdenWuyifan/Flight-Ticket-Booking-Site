@@ -35,13 +35,13 @@
 		for(var i=0; i<BA_regis.length; i++) {
     		BA_regis[i].style.display = 'none';
 		}
-		document.getElementsById('Customer').checked = false;
-		document.getElementsById('AirlineStaff').checked = false;
-		document.getElementsById('BookingAgent').checked = false;
+		document.getElementsById('customer').checked = false;
+		document.getElementsById('airline_staff').checked = false;
+		document.getElementsById('booking_agent').checked = false;
 	}
 
 	function radioCheck() {
-		if(document.getElementById('AirlineStaff').checked) {
+		if(document.getElementById('airline_staff').checked) {
 			var C_regis = document.getElementsByClassName("Customer_regi");
 			for(var i=0; i<C_regis.length; i++) {
 				C_regis[i].style.display = 'none';
@@ -58,7 +58,7 @@
 				BA_regis[i].required = false;
 			}
 		}
-		else if(document.getElementById('Customer').checked) {
+		else if(document.getElementById('customer').checked) {
 			var C_regis = document.getElementsByClassName("Customer_regi");
 			for(var i=0; i<C_regis.length; i++) {
 				C_regis[i].style.display = 'inline-block';
@@ -106,16 +106,16 @@
 					<form action="/registerAuth" method="POST">
 						<div class="form-group">
 							<div class="form-checkbox">
-								<label for="Customer">
-									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()">
+								<label for="customer">
+									<input type="radio" id="customer" name="login-type" value="customer" onclick="javascript:radioCheck()">
 									<span></span>Customer
 								</label>
-								<label for="BookingAgent">
-									<input type="radio" id="BookingAgent" name="login-type" value="BookingAgent" onclick="javascript:radioCheck()">
+								<label for="booking_agent">
+									<input type="radio" id="booking_agent" name="login-type" value="booking_agent" onclick="javascript:radioCheck()">
 									<span></span>Booking Agent
 								</label>
-								<label for="AirlineStaff">
-									<input type="radio" id="AirlineStaff" name="login-type" value="AirlineStaff" onclick="javascript:radioCheck()">
+								<label for="airline_staff">
+									<input type="radio" id="airline_staff" name="login-type" value="airline_staff" onclick="javascript:radioCheck()">
 									<span></span>Airline Staff
 								</label>
 							</div>
@@ -171,20 +171,20 @@
 						</div>
 						<!--Booking Agent-->
 						<div class="form-group">
-							<input class="form-control Booking_Agent_regi" type="text" name="email" required/>
+							<input class="form-control Booking_Agent_regi" type="text" name="email-ba" required/>
 							<span class="form-label">Email</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Booking_Agent_regi" type="password" name="password" required/>
+							<input class="form-control Booking_Agent_regi" type="password" name="password-ba" required/>
 							<span class="form-label">Password</span>
 						</div>
 						<!--Airline Staff-->
 						<div class="form-group">
-							<input class="form-control Airline_Staff_regi" type="text" name="username" required/>
+							<input class="form-control Airline_Staff_regi" type="text" name="username-as" required/>
 							<span class="form-label">Username</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Airline_Staff_regi" type="password" name="password" required/>
+							<input class="form-control Airline_Staff_regi" type="password" name="password-as" required/>
 							<span class="form-label">Password</span>
 						</div>
 						<div class="form-group">
@@ -196,7 +196,7 @@
 							<span class="form-label">Last Name</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Airline_Staff_regi" type="date" name = "dob" required/> 
+							<input class="form-control Airline_Staff_regi" type="date" name = "dob-as" required/> 
 							<span class="form-label">Date of Birth</span>
 						</div>
 						<div class="form-group">

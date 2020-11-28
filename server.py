@@ -38,12 +38,12 @@ def loginAuth():
 	#grabs information from the forms
 	login_type = request.form['login-type']
 
-	if login_type == 'AirlineStaff':
+	if login_type == 'airline_staff':
 		username = request.form['username']
 		password = request.form['password']
 
 		cursor = conn.cursor()
-		query = "SELECT * FROM {} WHERE username = '{}' and pwd = '{}'"
+		query = "SELECT * FROM {} WHERE username = '{}' and password = '{}'"
 		cursor.execute(query.format(login_type, username, password))
 
 		data = cursor.fetchone()
@@ -62,7 +62,7 @@ def loginAuth():
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
-		query = "SELECT * FROM {} WHERE email = '{}' and pwd = '{}'"
+		query = "SELECT * FROM {} WHERE email = '{}' and password = '{}'"
 		cursor.execute(query.format(login_type, email, password))
 		#stores the results in a variable
 		data = cursor.fetchone()
@@ -86,33 +86,24 @@ def registerAuth():
     #grabs information from the forms
 	login_type = request.form['login-type']
 
-	if login_type == 'Customer':
+	if login_type == 'customer':
 		email = request.form['email']
 		username = request.form['username']
 		password = request.form['password']
 		building_num = request.form['buildingnum']
-		if building_num == "": building_num=None
 		street = request.form['street']
-		if street == "": street=None
 		city = request.form['city']
-		if city == "": city=None
 		state = request.form['state']
-		if state == "": state=None
 		phone_num = request.form['phonenumber']
-		if phone_num == "": phone_num=None
 		passport_number = request.form['passportnumber']
-		if passport_number == "": passport_number=None
 		passport_expiration = request.form['passportexpiration']
-		if passport_expiration == "": passport_expiration=None
 		passport_country = request.form['passportcountry']
-		if passport_country == "": passport_country=None
 		date_of_birth = request.form['dob']
-		if date_of_birth == "": date_of_birth=None
 		print(email, username, password, building_num, street, city, state, phone_num, passport_country, passport_expiration, passport_country, date_of_birth, file=sys.stdout)
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
-		query = "SELECT * FROM Customer WHERE email = '{}'"
+		query = "SELECT * FROM customer WHERE email = '{}'"
 		cursor.execute(query.format(email))
 		#stores the results in a variable
 		data = cursor.fetchone()
@@ -123,53 +114,49 @@ def registerAuth():
 			error = "This user already exists"
 			return render_template('register.html', error = error)
 		else:
-			ins = "INSERT INTO Customer VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+			ins = "INSERT INTO customer VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
 			cursor.execute(ins.format(email, username, password, building_num, street, city, state, phone_num, passport_number, passport_expiration, passport_country, date_of_birth))
 			conn.commit()
 			cursor.close()
 			return render_template('index.html')
-	elif login_type == 'AirlineStaff':
-		username = request.form['username']
-		password = request.form['password']
+	elif login_type == 'airline_staff':
+		username = request.form['username-as']
+		password = request.form['password-as']
 		first_name = request.form['first_name']
 		last_name = request.form['last_name']
-		date_of_birth = request.form['dob']
+		date_of_birth = request.form['dob-as']
 		airline_name = request.form['airline_name']
 
 		cursor = conn.cursor()
-		query = "SELECT * FROM AirlineStaff WHERE username = '{}'"
+		query = "SELECT * FROM airline_staff WHERE username = '{}'"
 		cursor.execute(query.format(username))
 		data = cursor.fetchone()
 		error = None
 		if(data):
 			return render_template('register.html', error = error)
 		else:
-			ins = "INSERT INTO AirlineStaff VALUES('{}', '{}', '{}', '{}', '{}', '{}')"
+			ins = "INSERT INTO airline_staff VALUES('{}', '{}', '{}', '{}', '{}', '{}')"
 			cursor.execute(ins.format(username, password, first_name, last_name, date_of_birth, airline_name))
 			conn.commit()
 			cursor.close()
 			return render_template('index.html')
-	else:
-		email = request.form['email']
-		password = request.form['password']
-		
-		print(email, password, file=sys.stdout)
+	elif login_type == 'booking_agent':
+		email = request.form['email-ba']
+		password = request.form['password-ba']
 		cursor = conn.cursor()
-		query = "SELECT * FROM BookingAgent WHERE email = '{}'"
+		query = "SELECT * FROM booking_agent WHERE email = '{}'"
 		cursor.execute(query.format(email))
 		data = cursor.fetchone()
 		error = None
 		if(data):
 			return render_template('register.html', error = error)
 		else:
-			query = "SELECT booking_agent_id FROM BookingAgent"
+			query = "SELECT booking_agent_id FROM booking_agent"
 			cursor.execute(query)
 			BA_ids = cursor.fetchall()
 			booking_agent_id = str(int(BA_ids[-1][0]) + 1)
 			
-			email = request.form['email']
-			password = request.form['password']
-			ins = "INSERT INTO BookingAgent VALUES('{}', '{}', '{}')"
+			ins = "INSERT INTO booking_agent VALUES('{}', '{}', '{}')"
 			cursor.execute(ins.format(email, password, booking_agent_id))
 			conn.commit()
 			cursor.close()

@@ -29,7 +29,7 @@
 	}
 
 	function radioCheck() {
-		if(document.getElementById('AirlineStaff').checked) {
+		if(document.getElementById('airline_staff').checked) {
 			document.getElementsByName("username")[0].style.display = "inline-block";
 			document.getElementsByName("username")[0].required = true;
 			document.getElementsByName("email")[0].style.display = "none";
@@ -55,16 +55,16 @@
 					<form action="/loginAuth" method="POST">
 						<div class="form-group">
 							<div class="form-checkbox">
-								<label for="Customer">
-									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()">
+								<label for="customer">
+									<input type="radio" id="customer" name="login-type" value="customer" onclick="javascript:radioCheck()">
 									<span></span>Customer
 								</label>
-								<label for="BookingAgent">
-									<input type="radio" id="BookingAgent" name="login-type" value="BookingAgent" onclick="javascript:radioCheck()">
+								<label for="booking_agent">
+									<input type="radio" id="booking_agent" name="login-type" value="booking_agent" onclick="javascript:radioCheck()">
 									<span></span>Booking Agent
 								</label>
-								<label for="AirlineStaff">
-									<input type="radio" id="AirlineStaff" name="login-type" value="AirlineStaff" onclick="javascript:radioCheck()">
+								<label for="airline_staff">
+									<input type="radio" id="airline_staff" name="login-type" value="airline_staff" onclick="javascript:radioCheck()">
 									<span></span>Airline Staff
 								</label>
 							</div>
