@@ -35,6 +35,9 @@
 		for(var i=0; i<BA_regis.length; i++) {
     		BA_regis[i].style.display = 'none';
 		}
+		document.getElementsById('Customer').checked = false;
+		document.getElementsById('AirlineStaff').checked = false;
+		document.getElementsById('BookingAgent').checked = false;
 	}
 
 	function radioCheck() {
@@ -42,42 +45,51 @@
 			var C_regis = document.getElementsByClassName("Customer_regi");
 			for(var i=0; i<C_regis.length; i++) {
 				C_regis[i].style.display = 'none';
+				C_regis[i].required = false;
 			}
 			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
 			for(var i=0; i<AS_regis.length; i++) {
 				AS_regis[i].style.display = 'inline-block';
+				AS_regis[i].required = true;
 			}
 			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
 			for(var i=0; i<BA_regis.length; i++) {
 				BA_regis[i].style.display = 'none';
+				BA_regis[i].required = false;
 			}
 		}
 		else if(document.getElementById('Customer').checked) {
 			var C_regis = document.getElementsByClassName("Customer_regi");
 			for(var i=0; i<C_regis.length; i++) {
 				C_regis[i].style.display = 'inline-block';
+				C_regis[i].required = true;
 			}
 			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
 			for(var i=0; i<AS_regis.length; i++) {
 				AS_regis[i].style.display = 'none';
+				AS_regis[i].required = false;
 			}
 			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
 			for(var i=0; i<BA_regis.length; i++) {
 				BA_regis[i].style.display = 'none';
+				BA_regis[i].required = false;
 			}
 		}
 		else {
 			var C_regis = document.getElementsByClassName("Customer_regi");
 			for(var i=0; i<C_regis.length; i++) {
 				C_regis[i].style.display = 'none';
+				C_regis[i].required = false;
 			}
 			var AS_regis = document.getElementsByClassName("Airline_Staff_regi");
 			for(var i=0; i<AS_regis.length; i++) {
 				AS_regis[i].style.display = 'none';
+				AS_regis[i].required = false;
 			}
 			var BA_regis = document.getElementsByClassName("Booking_Agent_regi");
 			for(var i=0; i<BA_regis.length; i++) {
 				BA_regis[i].style.display = 'inline-block';
+				BA_regis[i].required = true;
 			}
 		}
 	}
@@ -91,11 +103,11 @@
 					<div class="form-header">
 						<h1>Welcome Aboard</h1>
 					</div>
-					<form action="/loginAuth" method="POST">
+					<form action="/registerAuth" method="POST">
 						<div class="form-group">
 							<div class="form-checkbox">
 								<label for="Customer">
-									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()" checked>
+									<input type="radio" id="Customer" name="login-type" value="Customer" onclick="javascript:radioCheck()">
 									<span></span>Customer
 								</label>
 								<label for="BookingAgent">
@@ -122,39 +134,39 @@
 							<span class="form-label">Password</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="number" name = "buildingnum" /> 
+							<input class="form-control Customer_regi" type="number" name = "buildingnum" required/> 
 							<span class="form-label">Building Number</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="text" name = "street" /> 
+							<input class="form-control Customer_regi" type="text" name = "street" required/> 
 							<span class="form-label">Street</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="text" name = "city" /> 
+							<input class="form-control Customer_regi" type="text" name = "city" required/> 
 							<span class="form-label">City</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="text" name = "state" /> 
+							<input class="form-control Customer_regi" type="text" name = "state" required/> 
 							<span class="form-label">State</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="number" name = "phonenumber" /> 
+							<input class="form-control Customer_regi" type="number" name = "phonenumber" required/> 
 							<span class="form-label">Phone Number</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="text" name = "passportnumber" /> 
+							<input class="form-control Customer_regi" type="text" name = "passportnumber" required/> 
 							<span class="form-label">Passport Number</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="date" name = "passportexpiration" /> 
+							<input class="form-control Customer_regi" type="date" name = "passportexpiration" required/> 
 							<span class="form-label">Passport Expiration</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="text" name = "passportcountry" /> 
+							<input class="form-control Customer_regi" type="text" name = "passportcountry" required/> 
 							<span class="form-label">Passport Country</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Customer_regi" type="date" name = "dob" /> 
+							<input class="form-control Customer_regi" type="date" name = "dob" required/> 
 							<span class="form-label">Date of Birth</span>
 						</div>
 						<!--Booking Agent-->
@@ -193,7 +205,7 @@
 						</div>
 
 						<div class="form-btn">
-							<button class="submit-btn">Login</button>
+							<button class="submit-btn">Register</button>
 						</div>
 						{% if error %}
 							<p class="error"><strong>Error:</strong> {{error}}</p>
@@ -395,6 +407,7 @@
 	}
 </style>
 
+<script src="/js/jquery.min.js"></script>
 <script>
 	$('.form-control').each(function () {
 		floatedLabel($(this));
@@ -413,7 +426,7 @@
 		}
 	}
 </script>
-<script src="/js/jquery.min.js"></script>
+
 
 </body>
 
