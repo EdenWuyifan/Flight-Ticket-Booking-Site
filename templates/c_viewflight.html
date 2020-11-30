@@ -1,14 +1,10 @@
 <html>
-
 <head>
-    <title>Airline Staff Portal</title>
-    
+    <title>Customer Portal</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
     <link href="/css/body_style.css" rel="stylesheet"/>
-    
 </head>
-
 <body>
     <header>
         <div class="header-title">
@@ -18,11 +14,14 @@
     
         <div class="header-buttons">
         <ul>
-            <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
-            <li><a href="/logout">Logout</a></li>
+            <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
+			<li><a href="/logout">Logout</a></li>
         </ul>
         </div>
     </header>
+
+
+
 
 
 <div class="container">
@@ -58,8 +57,8 @@
         <th>Price</th>
         <th>Status</th>
         <th>Airplane ID</th>
-
-    {% for line in datas %}
+    
+    {% for line in data %}
         <tr>
             <td>{{line[0]}}</td>
             <td>{{line[1]}}</td>
@@ -69,14 +68,10 @@
             <td>{{line[5]}}</td>
             <td>{{line[6]}}</td>
             <td>{{line[7]}}</td>
-            <td>{{line[8]}}</td>
-            
+            <td>{{line[8]}}</td>     
         </tr>
     {% endfor %}
     </table>
 </div>
-
 </body>
-
-
 </html>
