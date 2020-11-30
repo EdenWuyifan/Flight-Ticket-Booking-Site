@@ -73,7 +73,7 @@ def loginAuth():
 			#creates a session for the the user
 			#session is a built in
 			session['email'] = email
-			return redirect(url_for('home'))
+			return redirect(url_for('cViewFlight'))
 		else:
 			#returns an error message to the html page
 			error = 'Invalid login or username'
@@ -167,7 +167,7 @@ def registerAuth():
 def home():
     email = session['email']
     cursor = conn.cursor()
-    query = "SELECT * FROM purchases WHERE C_email = '{}' ORDER BY C_email DESC"
+    query = "SELECT * FROM purchases WHERE customer_email = '{}' ORDER BY customer_email DESC"
     cursor.execute(query.format(email))
     data1 = cursor.fetchall() 
     cursor.close()
