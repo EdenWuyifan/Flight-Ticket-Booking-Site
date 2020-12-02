@@ -4,6 +4,10 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
     <link href="/css/body_style.css" rel="stylesheet"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    
 </head>
 <body>
     <header>
@@ -26,17 +30,16 @@
 
 <div class="container">
 
-    <div class="navbar">
-        <ul>
-            <li><a>View My Flight</a></li>
-            <li><a href="">Create New Flight</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-        </ul>
+    <div class="dd">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">View My Flights</a></button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cSpending">Track My Spending</a></button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cPurchase">Search & Purchase</a></button>
+        </div>
     </div>
 
     <form class="search" action="/sViewFlight" method="POST">

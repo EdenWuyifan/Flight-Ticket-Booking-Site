@@ -6,7 +6,10 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
     <link href="/css/body_style.css" rel="stylesheet"/>
-    
+    <script src="/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+
 </head>
 
 <body>
@@ -27,17 +30,29 @@
 
 <div class="container">
 
-    <div class="navbar">
-        <ul>
-            <li><a>View My Flight</a></li>
-            <li><a href="">Create New Flight</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-            <li><a href="">Change status</a></li>
-        </ul>
+    <div class="dd">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="/sViewFlight">View My Flight</a></li>
+                    <li><a href="/sViewBA">View All BAs</a></li>
+                    <li><a href="/sViewCustomer">View Frequent Customers</a></li>
+                    <li><a href="/sViewDestination">View Top Destinations</a></li>
+                </ul>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="/addAirplane">Add Airplane</a></li>
+                    <li><a href="/addAirport">Add New Airport</a></li>
+                    <li><a href="/createFlight">Create New Flights</a></li>
+                </ul>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/changeStatus">Change Status</a></button>
+        </div>
     </div>
 
     <form class="search" action="/sViewFlight" method="POST">
