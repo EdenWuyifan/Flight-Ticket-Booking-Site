@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>Customer Portal</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    
+</head>
+<body>
+    <header>
+        <div class="header-title">
+            <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
+            <h1>B&E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
+			<li><a href="/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
+
+
+
+
+<div class="container">
+
+    <div class="dd">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cViewFlight">View My Flights</a></button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">Track My Spending</a></button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cPurchase">Search & Purchase</a></button>
+        </div>
+    </div>
+
+    <form class="search" action="/sViewFlight" method="POST">
+        <input type="date" name = "start" placeholder="From" required/>
+        <span class="form-label">From:</span>
+        <input type="date" name = "end" placeholder="To" required/>
+        <span class="form-label">To:</span>
+        <input type="submit" value = Check />
+    </form>
+
+    <table class="data-showcase">
+        <th>Airline</th>
+        <th>Flight</th>
+        <th>Depart Airport</th>
+        <th>Depart Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Airplane ID</th>
+    
+    {% for line in last_year %}
+        <tr>
+            <td>{{line[0]}}</td>   
+        </tr>
+    {% endfor %}
+    {% for line in bar_data %}
+        <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+            <td>{{line[6]}}</td>
+            <td>{{line[7]}}</td>
+            <td>{{line[8]}}</td>     
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+</body>
+</html>

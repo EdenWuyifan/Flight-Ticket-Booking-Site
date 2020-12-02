@@ -1,0 +1,106 @@
+
+<!-- saved from url=(0034)http://127.0.0.1:6006/baViewFlight -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Booking Agent Portal</title>
+    <link href="./Booking Agent Portal_files/bootstrap.min.css" rel="stylesheet">
+    <link href="./Booking Agent Portal_files/header_style.css" rel="stylesheet">
+    <link href="./Booking Agent Portal_files/body_style.css" rel="stylesheet">
+    
+    <script src="./Booking Agent Portal_files/bootstrap.min.js"></script>
+    <link href="./Booking Agent Portal_files/dropdown_style.css" rel="stylesheet">
+    <script src="./Booking Agent Portal_files/jquery.min.js"></script>
+    
+<script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/assets/prompt.js"></script></head>
+<body data-new-gr-c-s-check-loaded="14.984.0" data-gr-ext-installed="">
+    <header>
+        <div class="header-title">
+            <img src="./Booking Agent Portal_files/B&amp;E-icon.png" style="width: 200px; height: 100px;">
+            <h1>B&amp;E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li style="width: 300px; font-weight: 300;">Welcome Booking@agent.com !</li>
+			<li><a href="http://127.0.0.1:6006/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
+
+
+
+
+<div class="container">
+
+    <div class="dd">
+        <div class="dropdown">
+            <a href="http://127.0.0.1:6006/baComission"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Commission</button></a>
+        </div>
+        <div class="dropdown">
+            <a href="http://127.0.0.1:6006/baCustomer"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Top Customer</button></a>
+        </div>
+        <div class="dropdown">
+            <a href="http://127.0.0.1:6006/baPurchase"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Search &amp; Purchase</button></a>
+        </div>
+    </div>
+
+    <form class="search" action="http://127.0.0.1:6006/sViewFlight" method="POST">
+        <input type="date" name="start" placeholder="From" required="">
+        <span class="form-label">From:</span>
+        <input type="date" name="end" placeholder="To" required="">
+        <span class="form-label">To:</span>
+        <input type="submit" value="Check">
+    </form>
+
+    <table class="data-showcase">
+        <tbody><tr><th>Airline</th>
+        <th>Flight</th>
+        <th>Depart Airport</th>
+        <th>Depart Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Airplane ID</th>
+    
+    
+        </tr><tr>
+            <td>Jet Blue</td>
+            <td>915</td>
+            <td>O'Hare</td>
+            <td>2020-09-01 00:00:00</td>
+            <td>SFO</td>
+            <td>2020-09-01 04:00:00</td>
+            <td>500</td>
+            <td>Delayed</td>
+            <td>2</td>     
+        </tr>
+    
+        <tr>
+            <td>Jet Blue</td>
+            <td>307</td>
+            <td>La Guardia</td>
+            <td>2020-12-19 22:00:00</td>
+            <td>SFO</td>
+            <td>2020-12-20 02:00:00</td>
+            <td>600</td>
+            <td>Upcoming</td>
+            <td>1</td>     
+        </tr>
+    
+        <tr>
+            <td>Jet Blue</td>
+            <td>455</td>
+            <td>JFK</td>
+            <td>2020-12-25 05:00:00</td>
+            <td>Louisville SDF</td>
+            <td>2020-12-25 07:00:00</td>
+            <td>97</td>
+            <td>Upcoming</td>
+            <td>3</td>     
+        </tr>
+    
+    </tbody></table>
+</div>
+
+<div id="LinkCheckrOverlay"></div></body></html>

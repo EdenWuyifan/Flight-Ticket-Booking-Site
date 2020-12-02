@@ -1,0 +1,35 @@
+.dd {
+    text-align: center;
+    background-image: url(/images/crew.jpg);
+    background-size:auto;
+    border-radius: 5px;
+    font-family: 'Teko', sans-serif;
+    font-weight: 700;
+}
+.dropdown {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+.dd button a:link { 
+    text-decoration: none;
+    font-size: 36px;
+}
+.dd button a:active { text-decoration:blink;color: white;}
+.dd button a:hover { text-decoration:none;color: white}
+.dd button a:visited { text-decoration: none;color: white}
+.dd button {
+    padding: 0;
+    margin: 0 0 0 0;
+    width: 33%;
+    height: 100px;
+    background-color: rgba(58, 121, 201, 0.5);
+    border: none;
+    border-bottom: 5px solid rgb(221, 221, 221);
+    font-size: 36px;
+    color: white;
+}
+.dd .dropdown-menu{
+    color: rgb(58, 58, 58);
+    font-size: 24px;
+}

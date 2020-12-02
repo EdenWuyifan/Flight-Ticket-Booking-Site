@@ -55,7 +55,7 @@ def loginAuth():
 		else:
 			error = 'Invalid login or username'
 			return render_template('login.html', error=error)
-	else:
+	elif login_type == "customer":
 		email = request.form['email']
 		password = request.form['password']
 
@@ -74,6 +74,29 @@ def loginAuth():
 			#session is a built in
 			session['email'] = email
 			return redirect(url_for('cViewFlight'))
+		else:
+			#returns an error message to the html page
+			error = 'Invalid login or username'
+			return render_template('login.html', error=error)
+	else:
+		email = request.form['email']
+		password = request.form['password']
+
+		#cursor used to send queries
+		cursor = conn.cursor()
+		#executes query
+		query = "SELECT * FROM {} WHERE email = '{}' and password = '{}'"
+		cursor.execute(query.format(login_type, email, password))
+		#stores the results in a variable
+		data = cursor.fetchone()
+		#use fetchall() if you are expecting more than 1 data row
+		cursor.close()
+		error = None
+		if(data):
+			#creates a session for the the user
+			#session is a built in
+			session['email'] = email
+			return redirect(url_for('baViewFlight'))
 		else:
 			#returns an error message to the html page
 			error = 'Invalid login or username'
@@ -234,15 +257,15 @@ def cSpending():
 	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
 			purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW()"""
 	cursor.execute(query.format(email))
-	last_year = cursor.fetchone()[0]
+	last_year = cursor.fetchall()
 
 	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
-			purchase_date BETWEEN date_sub(NOW(), INTERVAL {} month) and date_sub(NOW(), INTERVAL {} month)"""
+			purchase_date BETWEEN date_sub(NOW(), INTERVAL '{}' month) and date_sub(NOW(), INTERVAL '{}' month)"""
 			# or '{}' month ???
 	bar_data = []
 	for i in range(0,6):
-		cursor.execute(query.format(email), str(i+1), str(i))
-		bar_data.append(cursor.fetchone()[0])
+		cursor.execute(query.format(email, str(i+1), str(i)))
+		bar_data.append(cursor.fetchall()[0])
 
 	# option: range of dates
 
