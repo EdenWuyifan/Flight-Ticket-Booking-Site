@@ -307,19 +307,67 @@ def sViewFlight():
 
 @app.route('/createFlight')
 def createFlight():
-	return
+	username = session['username']
+	airline_name = request.form['airline_name'] # inputs
+	flight_num = request.form['flight_num']
+	departure_airport = request.form['departure_airport']
+	departure_time = request.form['departure_time']
+	arrival_airport = request.form['arrival_airport']
+	arrival_time = request.form['arrival_time']
+	price = request.form['price']
+	status = request.form['status']
+	airplane_id = request.form['airplane_id'] #
+
+	cursor = conn.cursor()
+	query = """INSERT INTO `flight` (`airline_name`,`flight_num`,`departure_airport`,`departure_time`,`arrival_airport`,`arrival_time`,`price`,`status`,`airplane_id`) 
+  			VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}');"""
+	cursor.execute(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id))
+	cursor.close()
+	error = None
+	return render_template('as_createFlight.html', username=username, error=error)
 
 @app.route('/changeStatus')
 def changeStatus():
-	return
+	username = session['username']
+	status = request.form['status'] # inputs
+	airline_name = request.form['airline_name']
+	flight_num = request.form['flight_num'] #
+	
+	cursor = conn.cursor()
+	query = """UPDATE flight SET status="{}" WHERE airline_name="{}" AND flight_num={};"""
+	cursor.execute(query.format(status,airline_name,flight_num))
+	cursor.close()
+	error = None
+	return render_template('as_changeStatus.html', username=username, error=error)
 
 @app.route('/addAirplane')
 def addAirplane():
-	return
+	username = session['username']
+	airline_name = request.form['airline_name'] # inputs
+	airplane_id = request.form['airplane_id']
+	seats = request.form['seats'] #
+
+	cursor = conn.cursor()
+	query = """INSERT INTO `airplane` (`airline_name`,`airplane_id`,`seats`) 
+  			VALUES ('{}','{}','{}');"""
+	cursor.execute(query.format(airline_name,airplane_id,seats))
+	cursor.close()
+	error = None
+	return render_template('as_addAirplane.html', username=username, error=error)
 
 @app.route('/addAirport')
 def addAirport():
-	return
+	username = session['username']
+	airport_name = request.form['airport_name'] # inputs
+	airport_city = request.form['airport_city'] #
+
+	cursor = conn.cursor()
+	query = """INSERT INTO `airport` (`airport_name`,`airport_city`) 
+  			VALUES ('{}','{}');"""
+	cursor.execute(query.format(airport_name,airport_city))
+	cursor.close()
+	error = None
+	return render_template('as_addAirport.html', username=username, error=error)
 
 @app.route('/sViewBA')
 def sViewBA():
