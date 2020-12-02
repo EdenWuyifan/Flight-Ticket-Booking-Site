@@ -229,7 +229,26 @@ def cPurchase():
 
 @app.route('/cSpending')
 def cSpending():
-	return
+	email = session['email']
+	cursor = conn.cursor()
+	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
+			purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW()"""
+	cursor.execute(query.format(email))
+	last_year = cursor.fetchone()[0]
+
+	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
+			purchase_date BETWEEN date_sub(NOW(), INTERVAL {} month) and date_sub(NOW(), INTERVAL {} month)"""
+			# or '{}' month ???
+	bar_data = []
+	for i in range(0,6):
+		cursor.execute(query.format(email), str(i+1), str(i))
+		bar_data.append(cursor.fetchone()[0])
+
+	# option: range of dates
+
+	cursor.close()
+	error = None
+	return render_template('c_spending.html', email=email, last_year=last_year, bar_data=bar_data, error=error)
 
 #------------------------Booking Agent Use Case------------------------
 @app.route('/baViewFlight')
@@ -304,41 +323,79 @@ def addAirport():
 
 @app.route('/sViewBA')
 def sViewBA():
+	username = session['username']
 	cursor = conn.cursor()
-	query = """SELECT email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
-			BETWEEN date_sub(NOW(), INTERVAL '{}') and NOW() GROUP BY email ORDER BY COUNT(ticket_id) DESC LIMIT 5"""
-	cursor.execute(query.format('1 month'))
+	query = """SELECT email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE purchase_date 
+			BETWEEN date_sub(NOW(), INTERVAL '{}') and NOW() AND username = '{}' GROUP BY email ORDER BY COUNT(ticket_id) DESC LIMIT 5"""
+	cursor.execute(query.format('1 month', username))
 	data = cursor.fetchall()
-	cursor.execute(query.format('1 year'))
+	cursor.execute(query.format('1 year', username))
 	data.extend(cursor.fetchall())
 
-	query = """SELECT email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
-			BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW() GROUP BY email ORDER BY SUM(price) DESC LIMIT 5"""
-	cursor.execute(query)
+	query = """SELECT email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE purchase_date 
+			BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW() AND username = '{}' GROUP BY email ORDER BY SUM(price) DESC LIMIT 5"""
+	cursor.execute(query.format(username))
 	data.extend(cursor.fetchall())
 	cursor.close()
-	return render_template('as_viewBA.html', username=session['username'], data=data)
+	error = None
+	return render_template('as_viewBA.html', username=username, data=data, error=error)
 
 @app.route('/sViewCustomer')
 def sViewCustomer():
-	customer = request.form['customer']
+	customer = request.form['customer'] # input
+	username = session['username']
 
 	cursor = conn.cursor()
 	query = """SELECT customer_email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
-			BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW() GROUP BY email ORDER BY COUNT(ticket_id) DESC"""
+			BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW() GROUP BY customer_email ORDER BY COUNT(ticket_id) DESC"""
 	cursor.execute(query)
-	data = cursor.fetchall()
-	# To do: a list of all flights a particular Customer has taken only on that particular airline.
+	customers = cursor.fetchall()
 
-	return render_template('as_viewCustomer.html', username=session['username'], data=data, error=error)
+	query = """SELECT DISTINCT flight_num FROM purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff 
+			WHERE customer_email = '{}' AND username = '{}'"""
+	cursor.execute(query.format(customer, username))
+	flights = cursor.fetchall() # a list of all flights a particular Customer has taken only on that particular airline.
+	cursor.close()
+	error = None
+
+	return render_template('as_viewCustomer.html', username=username, customers=customers, flights=flights, error=error)
 
 @app.route('/sViewReport')
 def sViewReport():
-	return
+	username = session['username']
+
+	# To do: range of dates
+
+	cursor = conn.cursor()
+	query = """SELECT SUM(price) FROM purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE username = '{}'
+			AND purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW()"""
+	cursor.execute(query.format(username, 'year'))
+	last_year = cursor.fetchone()[0]
+
+	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN airline_staff WHERE username = '{}' 
+			AND purchase_date BETWEEN date_sub(NOW(), INTERVAL {} month) and date_sub(NOW(), INTERVAL {} month)"""
+	bar_data = []
+	for i in range(0,6):
+		cursor.execute(query.format(email), str(i+1), str(i))
+		bar_data.append(cursor.fetchone()[0])
+	cursor.close()
+	error = None
+	return render_template('as_viewReport.html', username=username, last_year=last_year, bar_data=bar_data, error=error)
 
 @app.route('/sViewDestination')
 def sViewDestination():
-	return
+	username = session['username']
+	cursor = conn.cursor()
+	query = """SELECT arrival_airport FROM ticket NATURAL JOIN flight NATURAL JOIN purchases NATURAL JOIN airline_staff 
+			WHERE username = '{}' AND purchase_date BETWEEN date_sub(NOW(), INTERVAL {}) and NOW() GROUP BY arrival_airport 
+			ORDER BY COUNT(ticket_id) DESC LIMIT 3"""
+	cursor.execute(query.format(username, '3 month'))
+	last_3months = cursor.fetchall()
+	cursor.execute(query.format(username, '1 year'))
+	last_year = cursor.fetchall()
+	cursor.close()
+	error = None
+	return render_template('as_viewDestination.html', username=username, last_year=last_year, last_3months=last_3months, error=error)
 
 '''
 @app.route('/post', methods=['GET', 'POST'])
