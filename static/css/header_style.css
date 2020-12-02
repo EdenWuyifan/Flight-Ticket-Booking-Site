@@ -1,18 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Teko:wght@300;400;700&display=swap');
 		
-a:link { text-decoration: none;color: white}
+a:link { text-decoration: none;color: rgb(58, 58, 58)}
 a:active { text-decoration:blink}
-a:hover { text-decoration:none;color: grey}
-a:visited { text-decoration: none;color: grey}
-
+a:hover { text-decoration:underline;color: rgb(58, 121, 201)}
+a:visited { text-decoration: none;color: rgb(58, 121, 201)}
+		
 header {
 	z-index: 1;
-	background-color: #000;
+	background-color: white;
 	position: relative;
 	top: 0;
 	left: 0;
 	right: 0;
 	height: 100px;
+	border-bottom: 3px solid rgb(221, 221, 221);
 }
 header *{
 	display: inline-block;
@@ -31,18 +32,17 @@ header li{
 	text-align: center;
 	font-family: 'Teko', sans-serif;
 	font-size: 30px;
-	color: white;
+	color: rgb(58, 121, 201);
 }
 header h1 {
 	padding-top: 10px;
 	font-size: 50px;
 	font-family: 'Teko', sans-serif;
 	font-weight: bold;
-	color: white;
+	color: rgb(58, 121, 201);
 	margin: 14px;
 	text-align: center;
 }
 header image {
 	height: 80px;
 }
-
