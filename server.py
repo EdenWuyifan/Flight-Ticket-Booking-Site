@@ -239,11 +239,27 @@ def search():
 def cViewFlight():
 	email = session['email']
 	cursor = conn.cursor()
-	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
+	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
+			WHERE customer_email='{}' AND departure_time > NOW()) ORDER BY departure_time"""
 	cursor.execute(query.format(email))
 	data = cursor.fetchall()
 	cursor.close()
 	return render_template('c_viewflight.html', email=email, data=data)
+	
+# Optionally you may include a way for the user to specify a range of dates, specify destination and/or source airport name or city name etc.
+@app.route('/cViewFlight', methods=['POST'])
+
+	"""
+	email = session['email']
+	start = request.form['start']
+	end = request.form['end']
+	cursor = conn.cursor()
+	# Allow to specify a range of dates
+	query = "SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND departure_time BETWEEN {} AND {}) ORDER BY departure_time"
+	cursor.execute(query.format(email, start, end))
+
+	cursor.close()
+	"""
 
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchase')
@@ -326,7 +342,9 @@ def sViewFlight():
 	cursor.execute(query.format(username))
 	airline_name = cursor.fetchone()[0]
 
-	query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
+	# Defaults will be showing all the upcoming flights operated by the airline he/she works for the next 30 days.
+	query = """SELECT * FROM flight WHERE airline_name = '{}' AND departure_time BETWEEN NOW() AND date_add(NOW(), INTERVAL 30 day) ORDER BY departure_time"""
+	#query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
 	cursor.execute(query.format(airline_name))
 	data1 = cursor.fetchall()
 	cursor.close()
@@ -342,16 +360,12 @@ def sViewFlightSearch():
 	cursor.execute(query.format(username))
 	airline_name = cursor.fetchone()[0]
 
-	#加入一个从start到end的depart date过滤
-
-	query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
-	cursor.execute(query.format(airline_name))
+	# Allow to specify a range of dates
+	query = """SELECT * FROM flight WHERE airline_name = '{}' AND departure_time BETWEEN {} AND {} ORDER BY departure_time"""
+	cursor.execute(query.format(airline_name, start, end))
 	data1 = cursor.fetchall()
 	cursor.close()
 	return render_template('as_viewflight.html', username=username, datas=data1)
-
-
-
 
 @app.route('/createFlight')
 def loadPage():
@@ -553,5 +567,6 @@ app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
+
 if __name__ == "__main__":
 	app.run('127.0.0.1', 5010, debug = True)
