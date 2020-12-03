@@ -262,10 +262,14 @@ def cSpending():
 	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
 			purchase_date BETWEEN date_sub(NOW(), INTERVAL '{}' month) and date_sub(NOW(), INTERVAL '{}' month)"""
 			# or '{}' month ???
-	bar_data = []
+	bar_data = ()
 	for i in range(0,6):
 		cursor.execute(query.format(email, str(i+1), str(i)))
-		bar_data.append(cursor.fetchall()[0])
+		spend = cursor.fetchone()
+		if spend[0] == None:
+			spend = (0,)
+		bar_data += spend
+	bar_data = (bar_data, )
 
 	# option: range of dates
 
@@ -328,26 +332,81 @@ def sViewFlight():
 	cursor.close()
 	return render_template('as_viewflight.html', username=username, datas=data1)
 
-@app.route('/createFlight')
-def createFlight():
+@app.route('/sViewFlight',methods=['POST'])
+def sViewFlightSearch():
 	username = session['username']
-	airline_name = request.form['airline_name'] # inputs
-	flight_num = request.form['flight_num']
-	departure_airport = request.form['departure_airport']
-	departure_time = request.form['departure_time']
-	arrival_airport = request.form['arrival_airport']
-	arrival_time = request.form['arrival_time']
-	price = request.form['price']
-	status = request.form['status']
-	airplane_id = request.form['airplane_id'] #
+	start = request.form['start']
+	end = request.form['end']
+	cursor = conn.cursor()
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline_name = cursor.fetchone()[0]
+
+	#加入一个从start到end的depart date过滤
+
+	query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
+	cursor.execute(query.format(airline_name))
+	data1 = cursor.fetchall()
+	cursor.close()
+	return render_template('as_viewflight.html', username=username, datas=data1)
+
+
+
+
+@app.route('/createFlight')
+def loadPage():
+	username = session['username']
+	cursor = conn.cursor()
+	query = "SELECT DISTINCT {} FROM airplane"
+	cursor.execute(query.format("airline_name"))
+	airlines = cursor.fetchall()
+	
+	query_1 = "SELECT DISTINCT airport_name FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+
+	query_2 = "SELECT DISTINCT airline_name,airplane_id FROM airplane"
+	cursor.execute(query_2)
+	airplanes = cursor.fetchall()
+
+	error = None
+	return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
+
+@app.route('/createFlight',methods=['POST'])
+def createFlight():
 
 	cursor = conn.cursor()
-	query = """INSERT INTO `flight` (`airline_name`,`flight_num`,`departure_airport`,`departure_time`,`arrival_airport`,`arrival_time`,`price`,`status`,`airplane_id`) 
-  			VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}');"""
+	query = "SELECT DISTINCT {} FROM airplane"
+	cursor.execute(query.format("airline_name"))
+	airlines = cursor.fetchall()
+	
+	query_1 = "SELECT DISTINCT airport_name FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+
+	query_2 = "SELECT DISTINCT airline_name,airplane_id FROM airplane"
+	cursor.execute(query_2)
+	airplanes = cursor.fetchall()
+
+	username = session['username']
+	airline_name = request.form['airline'] # inputs
+	flight_num = request.form['flightNumber']
+	departure_airport = request.form['departureAirport']
+	departure_time = request.form['departureTime']
+	arrival_airport = request.form['arrivalAirport']
+	arrival_time = request.form['arrivalTime']
+	price = request.form['price']
+	status = request.form['status']
+	airplane_id = request.form['airplaneId'] #
+
+	cursor = conn.cursor()
+	query = """INSERT INTO `flight` VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");"""
 	cursor.execute(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id))
+	print(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id), file=sys.stdout)
+	conn.commit()
 	cursor.close()
 	error = None
-	return render_template('as_createFlight.html', username=username, error=error)
+	return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
 
 @app.route('/changeStatus')
 def changeStatus():
@@ -495,4 +554,4 @@ app.secret_key = 'some key that you will never guess'
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
 if __name__ == "__main__":
-	app.run('127.0.0.1', 5000, debug = True)
+	app.run('127.0.0.1', 5010, debug = True)
