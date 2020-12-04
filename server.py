@@ -122,7 +122,7 @@ def registerAuth():
 		passport_expiration = request.form['passportexpiration']
 		passport_country = request.form['passportcountry']
 		date_of_birth = request.form['dob']
-		print(email, username, password, building_num, street, city, state, phone_num, passport_country, passport_expiration, passport_country, date_of_birth, file=sys.stdout)
+		#print(email, username, password, building_num, street, city, state, phone_num, passport_country, passport_expiration, passport_country, date_of_birth, file=sys.stdout)
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
@@ -220,19 +220,23 @@ def airport(name):
 #Search for upcoming flights
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-	source = airport(request.form['source'])
-	destination = airport(request.form['destination'])
+	source = request.form['source']
+	destination = request.form['destination']
 	date = request.form['date']
 	cursor = conn.cursor()
-	query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
-	cursor.execute(query.format(source, destination, date))
+	if len(date) != 0:
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		cursor.execute(query.format(source, destination, date))
+	else: # user didn't enter a date
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	if request.form['flight-type'] == "roundtrip": # roundtrip
 		back_date = request.form['back-date']
 		cursor.execute(query.format(destination, source, back_date))
 		data.extend(cursor.fetchall())
 	cursor.close()
-	return render_template('result.html', email=email, data=data)
+	return render_template('result.html', data=data)
 
 #--------------------------Customer Use Case--------------------------
 @app.route('/cViewFlight')
@@ -263,37 +267,42 @@ def cViewFlightSearch():
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchaseSearch')
 def cLoadSearch():
-	email = session['email']
-	error=None
+	email =  session['email']
 	return render_template('c_search.html', email=email, error=error)
+
 @app.route('/cPurchaseSearch', methods=["SEARCH"])
 def cLoadPurchaseInfo():
 	email = session['email']
-	departure_airport = request.form['start']
-	arrival_airport = request.form['end']
-	# To be expand
-
+	source = request.form['source'] # inputs
+	destination = request.form['destination']
+	date = request.form['date'] #
 	cursor = conn.cursor()
-	# 找航班return列表
-
-	return render_template('c_purchase.html', email=email, error=error, datas=datas)
-
-@app.route('/cPurchase')
+	if len(date) != 0:
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		cursor.execute(query.format(source, destination, date))
+	else:
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		cursor.execute(query.format(source, destination))
+	data = cursor.fetchall()
+	cursor.close()
+	error = None
+	return render_template('c_purchase.html', email=email, error=error, data=data)
 
 @app.route('/cPurchase', methods=["PURCHASE"])
 def cPurchase():
 	email = session['email']
-	# get flight_num, airline_name
-
-	# ticket_id == existed last tid from purchases+1
+	flight_num  = request.form['flight_num'] # inputs
+	airline_name = request.form['airline_name'] #
+	
+	cursor = conn.cursor()
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
-	ticket_id = str(int(t_ids[-1][0]) + 1)
+	ticket_id = str(int(max(t_ids)) + 1)
 
-	#insert new into purchases and ticket 
-
-	error=None
+	query = """INSERT INTO purchases VALUES ('{}','{}',NULL,'{}');"""
+	cursor.execute(query.format(ticket_id, airline_name, flight_num))
+	cursor.close()
 	return render_template('c_search.html', email=email, error=error)
 
 @app.route('/cSpending')
@@ -335,9 +344,49 @@ def baViewFlight():
 	return render_template('ba_viewflight.html', email=email, data=data)
 
 #Booking agent searches for upcoming flights and purchases tickets for other customers
-@app.route('/baPurchase')
+@app.route('/baPurchaseSearch')
+def baLoadSearch():
+	email =  session['email']
+	return render_template('ba_search.html', email=email, error=error)
+
+@app.route('/baPurchaseSearch', methods=["SEARCH"])
+def baLoadPurchaseInfo():
+	email = session['email']
+	source = request.form['source'] # inputs
+	destination = request.form['destination']
+	date = request.form['date'] #
+	cursor = conn.cursor()
+	if len(date) != 0:
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		cursor.execute(query.format(source, destination, date))
+	else:
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		cursor.execute(query.format(source, destination))
+	data = cursor.fetchall()
+	cursor.close()
+	error = None
+	return render_template('ba_purchase.html', email=email, error=error, data=data)
+
+@app.route('/baPurchase', methods=["PURCHASE"])
 def baPurchase():
-	return
+	email = session['email']
+	flight_num  = request.form['flight_num'] # inputs
+	airline_name = request.form['airline_name'] #
+	
+	cursor = conn.cursor()
+	query = "SELECT ticket_id FROM purchases"
+	cursor.execute(query)
+	t_ids = cursor.fetchall()
+	ticket_id = str(int(max(t_ids)) + 1)
+
+	query = "SELECT booking_agent_id FROM booking_agent WHERE email='{}';"
+	cursor.execute(query.format(email))
+	booking_agent_id = cursor.fetchall()[0]
+	
+	query = """INSERT INTO purchases VALUES ('{}','{}','{}','{}');"""
+	cursor.execute(query.format(ticket_id, airline_name, booking_agent_id, flight_num))
+	cursor.close()
+	return render_template('ba_search.html', email=email, error=error)
 
 @app.route('/baComission')
 def baComission():
@@ -444,7 +493,7 @@ def createFlight():
 	cursor = conn.cursor()
 	query = """INSERT INTO `flight` VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");"""
 	cursor.execute(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id))
-	print(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id), file=sys.stdout)
+	#print(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id), file=sys.stdout)
 	conn.commit()
 	cursor.close()
 	error = None
