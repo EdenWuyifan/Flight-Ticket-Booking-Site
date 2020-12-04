@@ -297,17 +297,23 @@ def cPurchase():
 	email = session['email']
 	flight_num  = request.form['flight_num'] # inputs
 	airline_name = request.form['airline_name'] #
-	
+
 	cursor = conn.cursor()
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
-	ticket_id = str(int(max(t_ids)) + 1)
+	if len(t_ids) == 0:
+		ticket_id = 1
+	else:
+		ticket_id = str(int(max(t_ids)) + 1)
 
-	query = """INSERT INTO purchases VALUES ('{}','{}',NULL,'{}');"""
+	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, flight_num))
+	query = """INSERT INTO purchases VALUES ('{}','{}', NULL, DATE(NOW()));"""
+	cursor.execute(query.format(ticket_id, email))
 	conn.commit()
 	cursor.close()
+	error = None
 	return render_template('c_search.html', email=email, error=error)
 
 @app.route('/cSpending')
@@ -382,16 +388,22 @@ def baPurchase():
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
-	ticket_id = str(int(max(t_ids)) + 1)
+	if len(t_ids) == 0:
+		ticket_id = 1
+	else:
+		ticket_id = str(int(max(t_ids)) + 1)
 
 	query = "SELECT booking_agent_id FROM booking_agent WHERE email='{}';"
 	cursor.execute(query.format(email))
 	booking_agent_id = cursor.fetchall()[0]
 	
-	query = """INSERT INTO purchases VALUES ('{}','{}','{}','{}');"""
-	cursor.execute(query.format(ticket_id, airline_name, booking_agent_id, flight_num))
+	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
+	cursor.execute(query.format(ticket_id, airline_name, flight_num))
+	query = """INSERT INTO purchases VALUES ('{}','{}', '{}', DATE(NOW()));"""
+	cursor.execute(query.format(ticket_id, email, booking_agent_id))
 	conn.commit()
 	cursor.close()
+	error = None
 	return render_template('ba_search.html', email=email, error=error)
 
 @app.route('/baComission')
@@ -547,12 +559,10 @@ def addAirport():
 	username = session['username']
 	airport_name = request.form['airport_name'] # inputs
 	airport_city = request.form['airport_city'] #
-	
+	error = None
 	if airport_name=="" or airport_city=="":
 		error = "Name or City cannot be empty!"
 		return render_template('as_addAirport.html',username=username, error = error)
-
-	error = None
 	cursor = conn.cursor()
 	query = """ SELECT * FROM airport WHERE airport_name = "{}" """
 	cursor.execute(query.format(airport_name))
