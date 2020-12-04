@@ -1,0 +1,112 @@
+<html>
+<head>
+    <title>Customer Portal</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
+    <link href="/css/form_style.css" rel="stylesheet"/>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <script src="/js/jquery.min.js"></script>
+    
+</head>
+<body>
+    <header>
+        <div class="header-title">
+            <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
+            <h1>B&E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
+			<li><a href="/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
+
+
+
+
+<div class="container">
+
+    <div class="dd">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">View My Flights</a></button>
+        </div>
+        <div class="dropdown">
+            <a href="/cSpending"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Track My Spending</button></a>
+        </div>
+        <div class="dropdown">
+            <a href="/cPurchaseSearch"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Search & Purchase</button></a>
+        </div>
+    </div>
+
+    
+</div>
+
+<!--  Flight Booking design  -->
+<div id="booking" class="section">
+    <div class="section-center">
+        <div class="container">
+            <div class="row">
+                <div class="booking-form">
+                    <div class="form-header">
+                        <h1>Book Your Flight</h1>
+                    </div>
+                    <form action="/cPurchaseSearch" method="POST">
+                        <div class="form-group">
+                            <select class="form-control" name="source">
+                                {% for airport in airports %}
+                                    <option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="select-arrow"></span>
+                            <span class="form-label">Flying From</span>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="destination">
+                                {% for airport in airports %}
+                                    <option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="select-arrow"></span>
+                            <span class="form-label">Flying To</span>
+                        </div>
+                        <div class="form-group">
+                            <input id="DepartureDate" class="form-control" type="date" name="date">
+                            <span class="form-label">Departure Date</span>
+                        </div>
+                        <div class="form-btn">
+                            <button class="submit-btn">Check availability</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+	<script>
+		$('.form-control').each(function () {
+			floatedLabel($(this));
+		});
+
+		$('.form-control').on('input', function () {
+			floatedLabel($(this));
+		});
+
+		function floatedLabel(input) {
+			var $field = input.closest('.form-group');
+			if (input.val()) {
+				$field.addClass('input-not-empty');
+			} else {
+				$field.removeClass('input-not-empty');
+			}
+		}
+	</script>
+</body>
+</html>

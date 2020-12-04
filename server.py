@@ -145,7 +145,7 @@ def registerAuth():
 		#If the previous query returns data, then user exists
 			error = "This user already exists"
 			return render_template('register.html', error = error)
-		if username='' or password='' or building_num='' or street='' or city='' or state='' or phone_num='' or passport_number='' or passport_expiration='' or passport_country='' or date_of_birth='':
+		if username=='' or password=='' or building_num=='' or street=='' or city=='' or state=='' or phone_num=='' or passport_number=='' or passport_expiration=='' or passport_country=='' or date_of_birth=='':
 			error = "Please fill out all your information!"
 			return render_template('register.html', error = error)
 		else:
@@ -172,7 +172,7 @@ def registerAuth():
 		if(data):
 			error = "This user already exists"
 			return render_template('register.html', error = error)
-		if password='' or first_name='' or last_name='' or date_of_birth='' or airline_name='':
+		if password=='' or first_name=='' or last_name=='' or date_of_birth=='' or airline_name=='':
 			error = "Please fill out all your information!"
 			return render_template('register.html', error = error)
 		else:
@@ -195,7 +195,7 @@ def registerAuth():
 		if(data):
 			error = "This user already exists"
 			return render_template('register.html', error = error)
-		if password='':
+		if password=='':
 			error = "Please enter your password!"
 			return render_template('register.html', error = error)
 		else:
@@ -291,40 +291,48 @@ def cViewFlightSearch():
 @app.route('/cPurchaseSearch')
 def cLoadSearch():
 	email =  session['email']
-	return render_template('c_search.html', email=email, error=error)
+	error = None
 
-@app.route('/cPurchaseSearch', methods=["SEARCH"])
+	cursor = conn.cursor()
+	query_1 = "SELECT * FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+	cursor.close()
+	return render_template('c_search.html', email=email, error=error, airports=airports)
+
+@app.route('/cPurchaseSearch', methods=["POST"])
 def cLoadPurchaseInfo():
 	email = session['email']
 	source = request.form['source'] # inputs
 	destination = request.form['destination']
 	date = request.form['date'] #
+	error = None
 	cursor = conn.cursor()
 	if len(date) != 0:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" and DATE(departure_time) = '{}'"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" """
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	cursor.close()
-	error = None
 	return render_template('c_purchase.html', email=email, error=error, data=data)
 
-@app.route('/cPurchase', methods=["PURCHASE"])
+@app.route('/cPurchase', methods=["POST"])
 def cPurchase():
 	email = session['email']
-	flight_num  = request.form['flight_num'] # inputs
+	flight_num  = request.form["flight_num"] # inputs
 	airline_name = request.form['airline_name'] #
-
+	error = None
 	cursor = conn.cursor()
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
+	t_ids.sort()
 	if len(t_ids) == 0:
 		ticket_id = 1
 	else:
-		ticket_id = str(int(max(t_ids)) + 1)
+		ticket_id = str(int(t_ids[-1][0]) + 1)
 
 	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, flight_num))
@@ -332,7 +340,6 @@ def cPurchase():
 	cursor.execute(query.format(ticket_id, email))
 	conn.commit()
 	cursor.close()
-	error = None
 	return render_template('c_search.html', email=email, error=error)
 
 @app.route('/cSpending')
@@ -377,9 +384,10 @@ def baViewFlight():
 @app.route('/baPurchaseSearch')
 def baLoadSearch():
 	email =  session['email']
+	error=None
 	return render_template('ba_search.html', email=email, error=error)
 
-@app.route('/baPurchaseSearch', methods=["SEARCH"])
+@app.route('/baPurchaseSearch', methods=["POST"])
 def baLoadPurchaseInfo():
 	email = session['email']
 	source = request.form['source'] # inputs
@@ -407,11 +415,11 @@ def baPurchase():
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
+	t_ids.sort()
 	if len(t_ids) == 0:
 		ticket_id = 1
 	else:
-		ticket_id = str(int(max(t_ids)) + 1)
-
+		ticket_id = str(int(t_ids[-1][0]) + 1)
 	query = "SELECT booking_agent_id FROM booking_agent WHERE email='{}';"
 	cursor.execute(query.format(email))
 	booking_agent_id = cursor.fetchall()[0]
@@ -578,7 +586,7 @@ def addAirport():
 	username = session['username']
 	airport_name = request.form['airport_name'] # inputs
 	airport_city = request.form['airport_city'] #
-	error = None
+	error = None	
 	if airport_name=="" or airport_city=="":
 		error = "Name or City cannot be empty!"
 		return render_template('as_addAirport.html',username=username, error = error)
