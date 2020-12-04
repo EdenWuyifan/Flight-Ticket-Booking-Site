@@ -129,6 +129,10 @@ def registerAuth():
 		passport_country = request.form['passportcountry']
 		date_of_birth = request.form['dob']
 		#print(email, username, password, building_num, street, city, state, phone_num, passport_country, passport_expiration, passport_country, date_of_birth, file=sys.stdout)
+		error = None
+		if len(email) == 0:
+			error = "Please enter your email!"
+			return render_template('register.html', error = error)
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
@@ -137,10 +141,12 @@ def registerAuth():
 		#stores the results in a variable
 		data = cursor.fetchone()
 		#use fetchall() if you are expecting more than 1 data row
-		error = None
 		if(data):
 		#If the previous query returns data, then user exists
 			error = "This user already exists"
+			return render_template('register.html', error = error)
+		if username='' or password='' or building_num='' or street='' or city='' or state='' or phone_num='' or passport_number='' or passport_expiration='' or passport_country='' or date_of_birth='':
+			error = "Please fill out all your information!"
 			return render_template('register.html', error = error)
 		else:
 			ins = "INSERT INTO customer VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
@@ -155,13 +161,19 @@ def registerAuth():
 		last_name = request.form['last_name']
 		date_of_birth = request.form['dob-as']
 		airline_name = request.form['airline_name']
-
+		error = None
+		if len(username) == 0:
+			error = "Please enter your username!"
+			return render_template('register.html', error = error)
 		cursor = conn.cursor()
 		query = "SELECT * FROM airline_staff WHERE username = '{}'"
 		cursor.execute(query.format(username))
 		data = cursor.fetchone()
-		error = None
 		if(data):
+			error = "This user already exists"
+			return render_template('register.html', error = error)
+		if password='' or first_name='' or last_name='' or date_of_birth='' or airline_name='':
+			error = "Please fill out all your information!"
 			return render_template('register.html', error = error)
 		else:
 			ins = "INSERT INTO airline_staff VALUES('{}', '{}', '{}', '{}', '{}', '{}')"
@@ -172,12 +184,19 @@ def registerAuth():
 	elif login_type == 'booking_agent':
 		email = request.form['email-ba']
 		password = request.form['password-ba']
+		error = None
+		if len(email) == 0:
+			error = "Please enter your email!"
+			return render_template('register.html', error = error)
 		cursor = conn.cursor()
 		query = "SELECT * FROM booking_agent WHERE email = '{}'"
 		cursor.execute(query.format(email))
 		data = cursor.fetchone()
-		error = None
 		if(data):
+			error = "This user already exists"
+			return render_template('register.html', error = error)
+		if password='':
+			error = "Please enter your password!"
 			return render_template('register.html', error = error)
 		else:
 			query = "SELECT booking_agent_id FROM booking_agent"
@@ -654,19 +673,6 @@ def sViewDestination():
 	error = None
 	return render_template('as_viewDestination.html', username=username, last_year=last_year, last_3months=last_3months, error=error)
 
-'''
-@app.route('/post', methods=['GET', 'POST'])
-def post():
-	email = session['email']
-	cursor = conn.cursor();
-	blog = request.form['blog']
-	query = "INSERT INTO blog (blog_post, email) VALUES('{}', '{}')"
-	cursor.execute(query.format(blog, username))
-	conn.commit()
-	cursor.close()
-	return redirect(url_for('home'))
-'''
-
 @app.route('/logout')
 def logout():
 	try:
@@ -677,7 +683,6 @@ def logout():
 		return redirect('/')
 	
 app.secret_key = 'some key that you will never guess'
-#Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
 
