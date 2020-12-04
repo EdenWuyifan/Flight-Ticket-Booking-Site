@@ -39,73 +39,26 @@
 						</div>
 						<form action="/search" method="POST">
 							<div class="form-group">
-								<div class="form-checkbox">
-									<label for="roundtrip">
-										<input type="radio" id="roundtrip" name="flight-type" value="roundtrip">
-										<span></span>Roundtrip
-									</label>
-									<label for="one-way">
-										<input type="radio" id="one-way" name="flight-type" value="oneway">
-										<span></span>One way
-									</label>
-								</div>
+								<select class="form-control" name="source">
+									{% for airport in airports %}
+										<option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
+									{% endfor %}
+								</select>
+								<span class="select-arrow"></span>
+								<span class="form-label">Flying From</span>
 							</div>
 							<div class="form-group">
-								<input class="form-control" type="text" name="source">
-								<span class="form-label">Flying from</span>
+								<select class="form-control" name="destination">
+									{% for airport in airports %}
+										<option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
+									{% endfor %}
+								</select>
+								<span class="select-arrow"></span>
+								<span class="form-label">Flying To</span>
 							</div>
 							<div class="form-group">
-								<input class="form-control" type="text" name="destination">
-								<span class="form-label">Flying to</span>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<input id="DepartureDate" class="form-control" type="date" name=date>
-										<span class="form-label">Departure Date</span>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">
-										<input id="ReturningDate" class="form-control" type="date" name=back-date>
-										<span class="form-label">Returning Date</span>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-4">
-									<div class="form-group">
-										<select class="form-control">
-											<option>Economy class</option>
-											<option>Business class</option>
-											<option>First class</option>
-										</select>
-										<span class="select-arrow"></span>
-										<span class="form-label">Travel class</span>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<select class="form-control">
-											<option>1</option>
-											<option>2</option>
-											<option>3</option>
-										</select>
-										<span class="select-arrow"></span>
-										<span class="form-label">Adults</span>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<select class="form-control">
-											<option>0</option>
-											<option>1</option>
-											<option>2</option>
-										</select>
-										<span class="select-arrow"></span>
-										<span class="form-label">Children</span>
-									</div>
-								</div>
+								<input id="DepartureDate" class="form-control" type="date" name="date">
+								<span class="form-label">Departure Date</span>
 							</div>
 							<div class="form-btn">
 								<button class="submit-btn">Check availability</button>

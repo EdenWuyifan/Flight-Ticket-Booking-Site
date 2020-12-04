@@ -18,6 +18,7 @@ body .data-showcase th {
 }
 body .data-showcase td, tr {
     border: 1px dotted grey;
+    background-color: rgba(255, 255, 255, 0.8);
 
 }
 body .data-showcase {

@@ -18,9 +18,15 @@ conn = mysql.connector.connect(host='localhost',
 #Define a route to hello function
 @app.route('/')
 def hello():
+	#To be change
 	if 'email' in session:
 		return redirect(url_for('home'))
-	return render_template('index.html')
+	cursor = conn.cursor()
+	query_1 = "SELECT * FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+	cursor.close()
+	return render_template('index.html', airports=airports)
 
 #Define route for login
 @app.route('/login')
@@ -197,17 +203,18 @@ def home():
     return render_template('home.html', email=email, posts=data1)
 
 #Match input of city/airport to the corresponding airport
+'''
 @app.route('/airport')
 def airport(name):
 	cursor = conn.cursor()
-	query = "SELECT airport_name FROM airport WHERE airport_name = '{}'"
+	query = """SELECT airport_name FROM airport WHERE airport_name = "{}" """
 	cursor.execute(query.format(name))
 	data = cursor.fetchone()
 	if data: # if the input is a airport name
 		cursor.close()
 		return(name)
 	else:
-		query = "SELECT airport_name FROM airport WHERE airport_city = '{}'"
+		query = """SELECT airport_name FROM airport WHERE airport_city = "{}" """
 		cursor.execute(query.format(name))
 		data = cursor.fetchone()
 		cursor.close()
@@ -216,10 +223,11 @@ def airport(name):
 			return(data[0])
 		else: # if the input is invalid
 			return error
-
+'''
 #Search for upcoming flights
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=["POST"])
 def search():
+
 	source = request.form['source']
 	destination = request.form['destination']
 	date = request.form['date']
@@ -231,10 +239,6 @@ def search():
 		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
-	if request.form['flight-type'] == "roundtrip": # roundtrip
-		back_date = request.form['back-date']
-		cursor.execute(query.format(destination, source, back_date))
-		data.extend(cursor.fetchall())
 	cursor.close()
 	return render_template('result.html', data=data)
 
@@ -543,15 +547,26 @@ def addAirport():
 	username = session['username']
 	airport_name = request.form['airport_name'] # inputs
 	airport_city = request.form['airport_city'] #
+	
+	if airport_name=="" or airport_city=="":
+		error = "Name or City cannot be empty!"
+		return render_template('as_addAirport.html',username=username, error = error)
 
-	cursor = conn.cursor()
-	query = """INSERT INTO `airport` (`airport_name`,`airport_city`) 
-  			VALUES ('{}','{}');"""
-	cursor.execute(query.format(airport_name,airport_city))
-	conn.commit()
-	cursor.close()
 	error = None
-	return render_template('as_addAirport.html', username=username, error=error)
+	cursor = conn.cursor()
+	query = """ SELECT * FROM airport WHERE airport_name = "{}" """
+	cursor.execute(query.format(airport_name))
+	result = cursor.fetchone()
+	if result:
+		error = "This airport already exists"
+		return render_template('as_addAirport.html',username=username, error = error)
+	else:
+		query = """INSERT INTO `airport` (`airport_name`,`airport_city`) 
+				VALUES ("{}","{}");"""
+		cursor.execute(query.format(airport_name,airport_city))
+		conn.commit()
+		cursor.close()
+		return render_template('as_addAirport.html', username=username, error=error)
 
 @app.route('/sViewBA')
 def sViewBA():

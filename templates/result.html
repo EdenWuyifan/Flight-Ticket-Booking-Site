@@ -3,59 +3,56 @@
     <title>Search Results</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
+    <link href="/css/form_style.css" rel="stylesheet"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
 </head>
 <body>
     <header>
         <div class="header-title">
-            <img src="/">
+            <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
             <h1>B&E AIRLINES</h1>
         </div>
     
         <div class="header-buttons">
         <ul>
-            <li><a href="/login">Chart</a></li>
+            <li><a href="/">Back</a></li>
 			<li><a href="/login">Login</a></li>
 			<li><a href="/register">Register</a></li>
         </ul>
         </div>
     </header>
 
-<form action="/post" method="POST">
-	<h1>Welcome {{username}}</h1>
-	<input type="text" name = "blog" placeholder="your post" required/> </br>
-	<input type="submit" value = Post />
-</form>
+<div class="container">
+    <form class="search">
+        <h1>The available flights are:</h1>
+    </form>
+    <table class="data-showcase">
+        <th>Airline</th>
+        <th>Flight</th>
+        <th>Depart Airport</th>
+        <th>Depart Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Airplane ID</th>
 
-<style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-</style>
-
-<table>
-	<th>Airline</th>
-    <th>Flight</th>
-    <th>Depart Airport</th>
-    <th>Depart Time</th>
-    <th>Destination</th>
-    <th>Arrival Time</th>
-    <th>Price</th>
-    <th>Status</th>
-    <th>Airplane ID</th>
-
-{% for line in data %}
-	<tr>
-		<td>{{line[0]}}</td>
-        <td>{{line[1]}}</td>
-        <td>{{line[2]}}</td>
-        <td>{{line[3]}}</td>
-        <td>{{line[4]}}</td>
-        <td>{{line[5]}}</td>
-        <td>{{line[6]}}</td>
-        <td>{{line[7]}}</td>
-        <td>{{line[8]}}</td>     
-    </tr>
-{% endfor %}
-</table>
+    {% for line in data %}
+        <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+            <td>{{line[6]}}</td>
+            <td>{{line[7]}}</td>
+            <td>{{line[8]}}</td>     
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 </body>
 </html>

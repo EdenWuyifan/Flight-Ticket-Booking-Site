@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <title>Airline Staff Portal</title>
+    
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
+    <link href="/css/form_style.css" rel="stylesheet"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+
+    <script>
+        window.onload = function() {
+        }
+        function checkSubmit(){
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="header-title">
+            <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
+            <h1>B&E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <div class="dd">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/sViewFlight">View My Flight</a></li>
+                        <li><a href="/sViewBA">View All BAs</a></li>
+                        <li><a href="/sViewCustomer">View Frequent Customers</a></li>
+                        <li><a href="/sViewDestination">View Top Destinations</a></li>
+                    </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/addAirplane">Add Airplane</a></li>
+                        <li><a href="/addAirport">Add New Airport</a></li>
+                        <li><a href="/createFlight">Create New Flights</a></li>
+                    </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/changeStatus">Change Status</a></button>
+            </div>
+        </div>
+    </div>
+    
+
+    <!--  Flight Creating design  -->
+	<div id="booking" class="section">
+		<div class="section-center">
+			<div class="container">
+				<div class="row">
+					<div class="booking-form">
+						<div class="form-header">
+							<h1>Add Airport</h1>
+						</div>
+                        <form action="/addAirport" method="POST">
+							<div class="form-group">
+                                <input class="form-control" type="text" name="airport_name">
+                                <span class="form-label">Airport Name</span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" type="text" name="airport_city">
+                                <span class="form-label">Airport City</span>
+                            </div>
+							<div class="form-btn">
+								<button class="submit-btn" onclick="javascript:checkSubmit()">Create Airport</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<script src="/js/jquery.min.js"></script>
+	<script>
+		$('.form-control').each(function () {
+			floatedLabel($(this));
+		});
+
+		$('.form-control').on('input', function () {
+			floatedLabel($(this));
+		});
+
+		function floatedLabel(input) {
+			var $field = input.closest('.form-group');
+			if (input.val()) {
+				$field.addClass('input-not-empty');
+			} else {
+				$field.removeClass('input-not-empty');
+			}
+        }
+        
+        
+	</script>
+
+
+</body>
+
+
+</html>
