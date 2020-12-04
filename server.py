@@ -302,6 +302,7 @@ def cPurchase():
 
 	query = """INSERT INTO purchases VALUES ('{}','{}',NULL,'{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, flight_num))
+	conn.commit()
 	cursor.close()
 	return render_template('c_search.html', email=email, error=error)
 
@@ -385,6 +386,7 @@ def baPurchase():
 	
 	query = """INSERT INTO purchases VALUES ('{}','{}','{}','{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, booking_agent_id, flight_num))
+	conn.commit()
 	cursor.close()
 	return render_template('ba_search.html', email=email, error=error)
 
@@ -524,6 +526,7 @@ def addAirplane():
 	query = """INSERT INTO `airplane` (`airline_name`,`airplane_id`,`seats`) 
   			VALUES ('{}','{}','{}');"""
 	cursor.execute(query.format(airline_name,airplane_id,seats))
+	conn.commit()
 	cursor.close()
 	error = None
 	return render_template('as_addAirplane.html', username=username, error=error)
@@ -545,6 +548,7 @@ def addAirport():
 	query = """INSERT INTO `airport` (`airport_name`,`airport_city`) 
   			VALUES ('{}','{}');"""
 	cursor.execute(query.format(airport_name,airport_city))
+	conn.commit()
 	cursor.close()
 	error = None
 	return render_template('as_addAirport.html', username=username, error=error)
