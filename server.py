@@ -261,9 +261,40 @@ def cViewFlightSearch():
 	return render_template('c_viewflight.html', email=email, datas=data1)	
 
 #Customer searches for upcoming flights and purchases tickets
+@app.route('/cPurchaseSearch')
+def cLoadSearch():
+	email = session['email']
+	error=None
+	return render_template('c_search.html', email=email, error=error)
+@app.route('/cPurchaseSearch', methods=["SEARCH"])
+def cLoadPurchaseInfo():
+	email = session['email']
+	departure_airport = request.form['start']
+	arrival_airport = request.form['end']
+	# To be expand
+
+	cursor = conn.cursor()
+	# 找航班return列表
+
+	return render_template('c_purchase.html', email=email, error=error, datas=datas)
+
 @app.route('/cPurchase')
+
+@app.route('/cPurchase', methods=["PURCHASE"])
 def cPurchase():
-	return
+	email = session['email']
+	# get flight_num, airline_name
+
+	# ticket_id == existed last tid from purchases+1
+	query = "SELECT ticket_id FROM purchases"
+	cursor.execute(query)
+	t_ids = cursor.fetchall()
+	ticket_id = str(int(t_ids[-1][0]) + 1)
+
+	#insert new into purchases and ticket 
+
+	error=None
+	return render_template('c_search.html', email=email, error=error)
 
 @app.route('/cSpending')
 def cSpending():
@@ -448,7 +479,14 @@ def addAirplane():
 	error = None
 	return render_template('as_addAirplane.html', username=username, error=error)
 
+
 @app.route('/addAirport')
+def loadAirports():
+	username = session['username']
+	error = None
+	return render_template('as_addAirport.html', username=username, error=error)
+
+@app.route('/addAirport',methods=["POST"])
 def addAirport():
 	username = session['username']
 	airport_name = request.form['airport_name'] # inputs
