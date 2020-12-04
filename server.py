@@ -248,8 +248,7 @@ def cViewFlight():
 	
 # Optionally you may include a way for the user to specify a range of dates, specify destination and/or source airport name or city name etc.
 @app.route('/cViewFlight', methods=['POST'])
-
-	"""
+def cViewFlightSearch():
 	email = session['email']
 	start = request.form['start']
 	end = request.form['end']
@@ -257,9 +256,9 @@ def cViewFlight():
 	# Allow to specify a range of dates
 	query = "SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND departure_time BETWEEN {} AND {}) ORDER BY departure_time"
 	cursor.execute(query.format(email, start, end))
-
+	data1 = cursor.fetchall()
 	cursor.close()
-	"""
+	return render_template('c_viewflight.html', email=email, datas=data1)	
 
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchase')
@@ -277,7 +276,6 @@ def cSpending():
 
 	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
 			purchase_date BETWEEN date_sub(NOW(), INTERVAL '{}' month) and date_sub(NOW(), INTERVAL '{}' month)"""
-			# or '{}' month ???
 	bar_data = ()
 	for i in range(0,6):
 		cursor.execute(query.format(email, str(i+1), str(i)))
@@ -344,7 +342,6 @@ def sViewFlight():
 
 	# Defaults will be showing all the upcoming flights operated by the airline he/she works for the next 30 days.
 	query = """SELECT * FROM flight WHERE airline_name = '{}' AND departure_time BETWEEN NOW() AND date_add(NOW(), INTERVAL 30 day) ORDER BY departure_time"""
-	#query = "SELECT * FROM flight WHERE airline_name = '{}' ORDER BY airline_name DESC"
 	cursor.execute(query.format(airline_name))
 	data1 = cursor.fetchall()
 	cursor.close()
