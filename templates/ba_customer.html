@@ -1,30 +1,33 @@
 <html>
+
 <head>
     <title>Booking Agent Portal</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/header_style.css" rel="stylesheet"/>
-    <link href="/css/body_style.css" rel="stylesheet"/>
-    
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/header_style.css" rel="stylesheet" />
+    <link href="/css/body_style.css" rel="stylesheet" />
+
+    <script src="https://cdn.anychart.com/releases/8.0.0/js/anychart-base.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <link href="/css/dropdown_style.css" rel="stylesheet" />
     <script src="/js/jquery.min.js"></script>
     <script type="text/javascript">
-        window.onload = function() {
+        window.onload = function () {
         }
     </script>
 </head>
+
 <body>
     <header>
         <div class="header-title">
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
             <h1>B&E AIRLINES</h1>
         </div>
-    
+
         <div class="header-buttons">
-        <ul>
-            <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
-			<li><a href="/logout">Logout</a></li>
-        </ul>
+            <ul>
+                <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
         </div>
     </header>
 
@@ -32,31 +35,83 @@
 
 
 
-<div class="container">
+    <div class="container">
 
-    <div class="dd">
-        <div class="dropdown">
-            <a href="/baViewFlight"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Flight</button></a>
+        <div class="dd">
+            <div class="dropdown">
+                <a href="/baViewFlight"><button class="btn btn-primary dropdown-toggle" type="button"
+                        data-toggle="dropdown">View My Flight</button></a>
+            </div>
+            <div class="dropdown">
+                <a href="/baComission"><button class="btn btn-primary dropdown-toggle" type="button"
+                        data-toggle="dropdown">View My Commission</button></a>
+            </div>
+            <div class="dropdown">
+                <a href="/baPurchaseSearch"><button class="btn btn-primary dropdown-toggle" type="button"
+                        data-toggle="dropdown">Search & Purchase</button></a>
+            </div>
         </div>
-        <div class="dropdown">
-            <a href="/baComission"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Commission</button></a>
-        </div>
-        <div class="dropdown">
-            <a href="/baPurchaseSearch"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Search & Purchase</button></a>
-        </div>
+
+        <form class="search" action="/baComission" method="POST">
+            <h1>Your Top Customers Are: </h1>
+        </form>
+
+        <div id="Container1"></div>
+        <div id="Container2"></div>
+        {% for col in data1 %}
+        <input type="hidden" class="data1" name={{col[0]}} value={{col[1]}}>
+        {% endfor %}
+        {% for col in data2 %}
+        <input type="hidden" class="data2" name={{col[0]}} value={{col[1]}}>
+        {% endfor %}
     </div>
+    <script>
+        const data1 = document.getElementsByClassName("data1");
+        var drawing1 = new Array();
+        for (var i = 0; i < data1.length; i++) {
+            drawing1.push([data1[i].name, Number(data1[i].value) * 0.1]);
+        };
+        for (var i = 0; i < 5 - data1.length; i++) {
+            drawing1.push(['None' + i, 0]);
+        };
+        var chart = anychart.column();
+        var d1 = {
+            header: ["Customer", "Commission"],
+            rows: drawing1
+        };
+        chart.data(d1);
+        chart.title("Amount of commission in the last year");
+        chart.container("Container2");
+        chart.draw();
 
-    <form class="search" action="/baComission" method="POST">
-        <h1>Your Top Customers Are: </h1>
-    </form>
+        var data2 = document.getElementsByClassName("data2");
+        var drawing2 = new Array();
+        for (var i = 0; i < data2.length; i++) {
+            drawing2.push([data2[i].name, Number(data2[i].value)]);
+        };
+        for (var i = 0; i < 5 - data2.length; i++) {
+            drawing2.push(['None' + i, 0]);
+        };
+        var chart2 = anychart.column();
+        var d2 = {
+            header: ["Customer", "Tickets"],
+            rows: drawing2
+        };
+        chart2.data(d2);        
+        chart2.title("Number of tickets bought in the past 6 months");
+        chart2.container("Container1");
+        chart2.draw();
 
-    <table class="data-showcase">
-        <h1>TO BE DONE</h1>
-    
-    </table>
-</div>
+
+    </script>
+    <style>
+        #Container1,
+        #Container2 {}
+    </style>
+
 
 
 
 </body>
+
 </html>

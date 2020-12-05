@@ -511,13 +511,16 @@ def baComissionSearch():
 def baCustomer():
 	email = session['email_b']
 	cursor = conn.cursor()
-	query = """SELECT customer_email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
+	query = """SELECT customer_email, SUM(price) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
    				BETWEEN date_sub(NOW(), INTERVAL 6 month) and NOW() and email = '{}' GROUP BY customer_email ORDER BY SUM(price) DESC LIMIT 5"""
 	cursor.execute(query.format(email))
-	print(query.format(email))
-	data = cursor.fetchall()
+	data1 = cursor.fetchall()
+	query = """SELECT customer_email, COUNT(ticket_id) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE email = '{}' AND 
+				purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW() GROUP BY customer_email ORDER BY COUNT(ticket_id) DESC LIMIT 5"""
+	cursor.execute(query.format(email))
+	data2 = cursor.fetchall()
 	cursor.close()
-	return render_template('ba_customer.html', email_b=email, data=data)
+	return render_template('ba_customer.html', email_b=email, data1=data1, data2=data2)
 
 #------------------------Ailine Staff Use Case------------------------
 @app.route('/sViewFlight')
