@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>Booking Agent Portal</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/header_style.css" rel="stylesheet"/>
+    <link href="/css/body_style.css" rel="stylesheet"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function() {
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="header-title">
+            <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
+            <h1>B&E AIRLINES</h1>
+        </div>
+    
+        <div class="header-buttons">
+        <ul>
+            <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
+			<li><a href="/logout">Logout</a></li>
+        </ul>
+        </div>
+    </header>
+
+
+
+
+
+<div class="container">
+
+    <div class="dd">
+        <div class="dropdown">
+            <a href="/baViewFlight"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Flight</button></a>
+        </div>
+        <div class="dropdown">
+            <a href="/baComission"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Commission</button></a>
+        </div>
+        <div class="dropdown">
+            <a href="/baPurchaseSearch"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Search & Purchase</button></a>
+        </div>
+    </div>
+
+    <form class="search" action="/baComission" method="POST">
+        <h1>Your Top Customers Are: </h1>
+    </form>
+
+    <table class="data-showcase">
+        <h1>TO BE DONE</h1>
+    
+    </table>
+</div>
+
+
+
+</body>
+</html>

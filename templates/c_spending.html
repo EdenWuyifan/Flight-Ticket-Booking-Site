@@ -67,13 +67,7 @@
     </div>
 
     <form class="search" action="/sViewFlight" method="POST">
-        <!--
-        <input type="date" name = "start" placeholder="From" required/>
-        <span class="form-label">From:</span>
-        <input type="date" name = "end" placeholder="To" required/>
-        <span class="form-label">To:</span>
-        <input type="submit" value = Check />
-        -->
+        <h1>Your Spendings Are: </h1>
     </form>
 
     <table class="data-showcase">
@@ -91,12 +85,12 @@
                 <td>{{line[0]}}</td>  
             {% endfor %}
             {% for line in bar_data %}
-                <td>{{line[0]}}</td>
-                <td>{{line[1]}}</td>
-                <td>{{line[2]}}</td>
-                <td>{{line[3]}}</td>
-                <td>{{line[4]}}</td>
-                <td>{{line[5]}}</td>
+                <td>$ {{line[0]}}</td>
+                <td>$ {{line[1]}}</td>
+                <td>$ {{line[2]}}</td>
+                <td>$ {{line[3]}}</td>
+                <td>$ {{line[4]}}</td>
+                <td>$ {{line[5]}}</td>
             {% endfor %}
         </tr>
     

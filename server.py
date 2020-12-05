@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import mysql.connector
 import sys
+import math
 
 #Initialize the app from Flask
 app = Flask(__name__,
@@ -20,7 +21,11 @@ conn = mysql.connector.connect(host='localhost',
 def hello():
 	#To be change
 	if 'email' in session:
-		return redirect(url_for('home'))
+		return redirect(url_for('cViewFlight'))
+	elif 'email_b' in session:
+		return redirect(url_for('baViewFlight'))
+	elif 'username' in session:
+		return redirect(url_for('sViewFlight'))
 	cursor = conn.cursor()
 	query_1 = "SELECT * FROM airport"
 	cursor.execute(query_1)
@@ -101,7 +106,7 @@ def loginAuth():
 		if(data):
 			#creates a session for the the user
 			#session is a built in
-			session['email'] = email
+			session['email_b'] = email
 			return redirect(url_for('baViewFlight'))
 		else:
 			#returns an error message to the html page
@@ -210,17 +215,6 @@ def registerAuth():
 			cursor.close()
 			return render_template('index.html')
 
-
-@app.route('/home')
-def home():
-    email = session['email']
-    cursor = conn.cursor()
-    query = "SELECT * FROM purchases WHERE customer_email = '{}' ORDER BY customer_email DESC"
-    cursor.execute(query.format(email))
-    data1 = cursor.fetchall() 
-    cursor.close()
-    return render_template('home.html', email=email, posts=data1)
-
 #Match input of city/airport to the corresponding airport
 '''
 @app.route('/airport')
@@ -281,11 +275,12 @@ def cViewFlightSearch():
 	end = request.form['end']
 	cursor = conn.cursor()
 	# Allow to specify a range of dates
-	query = "SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND departure_time BETWEEN {} AND {}) ORDER BY departure_time"
+	query = "SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND departure_time BETWEEN '{} 00:00:00' AND '{} 00:00:00') ORDER BY departure_time"
 	cursor.execute(query.format(email, start, end))
-	data1 = cursor.fetchall()
+	print(query.format(email, start, end))
+	data = cursor.fetchall()
 	cursor.close()
-	return render_template('c_viewflight.html', email=email, datas=data1)	
+	return render_template('c_viewflight.html', email=email, data=data)	
 
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchaseSearch')
@@ -321,10 +316,22 @@ def cLoadPurchaseInfo():
 @app.route('/cPurchase', methods=["POST"])
 def cPurchase():
 	email = session['email']
-	flight_num  = request.form["flight_num"] # inputs
-	airline_name = request.form['airline_name'] #
+	data_index = int(request.form["data-index"])-1	
+	flight_num  = request.form.getlist("flight_num")[data_index] # inputs
+	airline_name = request.form.getlist('airline_name')[data_index] #
 	error = None
+
 	cursor = conn.cursor()
+	"""
+	query_1 = "SELECT * FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+	"""
+
+	query_2 = "SELECT * FROM flight WHERE flight_num={}"
+	cursor.execute(query_2.format(flight_num))
+	flight = (cursor.fetchone(),)
+
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
@@ -336,11 +343,12 @@ def cPurchase():
 
 	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, flight_num))
+
 	query = """INSERT INTO purchases VALUES ('{}','{}', NULL, DATE(NOW()));"""
 	cursor.execute(query.format(ticket_id, email))
 	conn.commit()
 	cursor.close()
-	return render_template('c_search.html', email=email, error=error)
+	return render_template('purchase_success.html', email=email, error=error, flight=flight)
 
 @app.route('/cSpending')
 def cSpending():
@@ -371,47 +379,83 @@ def cSpending():
 #------------------------Booking Agent Use Case------------------------
 @app.route('/baViewFlight')
 def baViewFlight():
-	email = session['email']
+	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
 			NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
 	cursor.execute(query.format(email))
 	data = cursor.fetchall()
 	cursor.close()
-	return render_template('ba_viewflight.html', email=email, data=data)
+	return render_template('ba_viewflight.html', email_b=email, data=data)
+
+@app.route('/baViewFlight', methods=['POST'])
+def baViewFlightSearch():
+	email = session['email_b']
+	start = request.form['start']
+	end = request.form['end']
+	cursor = conn.cursor()
+	# Allow to specify a range of dates
+	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent
+	 			WHERE email='{}' AND departure_time BETWEEN '{} 00:00:00' AND '{} 00:00:00') ORDER BY departure_time"""
+	cursor.execute(query.format(email, start, end))
+	print(query.format(email, start, end))
+	data = cursor.fetchall()
+	cursor.close()
+	return render_template('ba_viewflight.html', email_b=email, data=data)	
 
 #Booking agent searches for upcoming flights and purchases tickets for other customers
 @app.route('/baPurchaseSearch')
 def baLoadSearch():
-	email =  session['email']
-	error=None
-	return render_template('ba_search.html', email=email, error=error)
+	email =  session['email_b']
+	error = None
+
+	cursor = conn.cursor()
+	query_1 = "SELECT * FROM airport"
+	cursor.execute(query_1)
+	airports = cursor.fetchall()
+	cursor.close()
+	return render_template('ba_search.html', email_b=email, error=error, airports=airports)
 
 @app.route('/baPurchaseSearch', methods=["POST"])
 def baLoadPurchaseInfo():
-	email = session['email']
+	email = session['email_b']
 	source = request.form['source'] # inputs
 	destination = request.form['destination']
 	date = request.form['date'] #
+	error = None
 	cursor = conn.cursor()
+	query_1 = "SELECT * FROM customer"
+	cursor.execute(query_1)
+	customers = cursor.fetchall()
 	if len(date) != 0:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" and DATE(departure_time) = '{}'"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" """
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	cursor.close()
-	error = None
-	return render_template('ba_purchase.html', email=email, error=error, data=data)
+	return render_template('ba_purchase.html', email_b=email, error=error, data=data, customers=customers)
 
-@app.route('/baPurchase', methods=["PURCHASE"])
+@app.route('/baPurchase', methods=["POST"])
 def baPurchase():
-	email = session['email']
-	flight_num  = request.form['flight_num'] # inputs
-	airline_name = request.form['airline_name'] #
-	
+	email = session['email_b']
+	data_index = int(request.form["data-index"])-1
+	flight_num  = request.form.getlist("flight_num")[data_index] # inputs
+	airline_name = request.form.getlist('airline_name')[data_index] #
+	customer_email = request.form['customer_email']
+	error = None
+
 	cursor = conn.cursor()
+
+	query_1 = "SELECT booking_agent_id FROM booking_agent WHERE email='{}'"
+	cursor.execute(query_1.format(email))
+	booking_agent_id = cursor.fetchone()
+
+	query_2 = "SELECT * FROM flight WHERE flight_num={}"
+	cursor.execute(query_2.format(flight_num))
+	flight = (cursor.fetchone(),)
+
 	query = "SELECT ticket_id FROM purchases"
 	cursor.execute(query)
 	t_ids = cursor.fetchall()
@@ -420,41 +464,58 @@ def baPurchase():
 		ticket_id = 1
 	else:
 		ticket_id = str(int(t_ids[-1][0]) + 1)
-	query = "SELECT booking_agent_id FROM booking_agent WHERE email='{}';"
-	cursor.execute(query.format(email))
-	booking_agent_id = cursor.fetchall()[0]
-	
+
 	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
 	cursor.execute(query.format(ticket_id, airline_name, flight_num))
-	query = """INSERT INTO purchases VALUES ('{}','{}', '{}', DATE(NOW()));"""
-	cursor.execute(query.format(ticket_id, email, booking_agent_id))
+	print(ticket_id, airline_name, flight_num)
+	query = """INSERT INTO purchases VALUES ('{}','{}', {}, DATE(NOW()));"""
+	cursor.execute(query.format(ticket_id, customer_email, int(booking_agent_id[0])))
 	conn.commit()
 	cursor.close()
-	error = None
-	return render_template('ba_search.html', email=email, error=error)
+	return render_template('purchase_success.html', email_b=email, error=error, flight=flight)
+
 
 @app.route('/baComission')
 def baComission():
-	email = session['email']
+	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT SUM(price), COUNT(ticket_id) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight 
 			WHERE purchase_date BETWEEN date_sub(NOW(), INTERVAL 30 day) and NOW() GROUP BY email HAVING email = '{}'"""
 	cursor.execute(query.format(email))
 	total_com, num_tickets = cursor.fetchone()
 	cursor.close()
-	data = tuple([total_com, total_com/num_tickets, num_tickets])
-	return render_template('ba_comission.html', email=email, data=data)
+	data = ([total_com, total_com/num_tickets, num_tickets],)
+	print(data)
+	return render_template('ba_comission.html', email_b=email, data=data)
+@app.route('/baComission',methods=["POST"])
+def baComissionSearch():
+	email = session['email_b']
+	start = request.form['start']
+	end = request.form['end']
+	cursor = conn.cursor()
+	query = """SELECT SUM(price), COUNT(ticket_id) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight 
+			WHERE purchase_date BETWEEN '{} 00:00:00' AND '{} 00:00:00' GROUP BY email HAVING email = '{}'"""
+	cursor.execute(query.format(start,end,email))
+	try:
+		total_com, num_tickets = cursor.fetchone()
+		data = ([total_com, math.floor(total_com/num_tickets), num_tickets],)
+	except:
+		data = ([0,0,0],)
+	cursor.close()
+	
+	return render_template('ba_comission.html', email_b=email, data=data)
 
 @app.route('/baCustomer')
 def baCustomer():
-	email = session['email']
+	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT customer_email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
-			BETWEEN date_sub(NOW(), INTERVAL 6 month) and NOW() GROUP BY email ORDER BY SUM(price) DESC HAVING email = '{}' LIMIT 5"""
+   				BETWEEN date_sub(NOW(), INTERVAL 6 month) and NOW() and email = '{}' GROUP BY customer_email ORDER BY SUM(price) DESC LIMIT 5"""
 	cursor.execute(query.format(email))
+	print(query.format(email))
 	data = cursor.fetchall()
 	cursor.close()
-	return render_template('ba_customer.html', email=email, data=data)
+	return render_template('ba_customer.html', email_b=email, data=data)
 
 #------------------------Ailine Staff Use Case------------------------
 @app.route('/sViewFlight')
@@ -660,7 +721,7 @@ def sViewReport():
 			AND purchase_date BETWEEN date_sub(NOW(), INTERVAL {} month) and date_sub(NOW(), INTERVAL {} month)"""
 	bar_data = []
 	for i in range(0,6):
-		cursor.execute(query.format(email), str(i+1), str(i))
+		cursor.execute(query.format(username), str(i+1), str(i))
 		bar_data.append(cursor.fetchone()[0])
 	cursor.close()
 	error = None
@@ -683,12 +744,13 @@ def sViewDestination():
 
 @app.route('/logout')
 def logout():
-	try:
+	if 'email' in session:
 		session.pop('email')
-		return redirect('/')
-	except:
+	elif 'email_b' in session:
+		session.pop('email_b')
+	else:
 		session.pop('username')
-		return redirect('/')
+	return redirect('/')
 	
 app.secret_key = 'some key that you will never guess'
 #debug = True -> you don't have to restart flask

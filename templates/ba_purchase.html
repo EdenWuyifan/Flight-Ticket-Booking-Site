@@ -1,14 +1,17 @@
 <html>
 <head>
-    <title>Customer Portal</title>
+    <title>Booking Agent Portal</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
     <link href="/css/body_style.css" rel="stylesheet"/>
-
+    
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="/css/dropdown_style.css" rel="stylesheet"/>
     <script src="/js/jquery.min.js"></script>
-    
+    <script type="text/javascript">
+        window.onload = function() {
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -19,7 +22,7 @@
     
         <div class="header-buttons">
         <ul>
-            <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
+            <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
 			<li><a href="/logout">Logout</a></li>
         </ul>
         </div>
@@ -33,13 +36,13 @@
 
     <div class="dd">
         <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">View My Flights</a></button>
+            <a href="/baViewFlight"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Flight</button></a>
         </div>
         <div class="dropdown">
-            <a href="/cSpending"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Track My Spending</button></a>
+            <a href="/baCustomer"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Top Customer</button></a>
         </div>
         <div class="dropdown">
-            <a href="/cPurchaseSearch"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Search & Purchase</button></a>
+            <a href="/baComission"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View My Commission</button></a>
         </div>
     </div>
 
@@ -54,7 +57,16 @@
                     <div class="form-header">
                         <h1>Book Your Flight</h1>
                     </div>
-                    <form action='/cPurchase', method="POST">
+                    <form action='/baPurchase', method="POST">
+                        <div class="form-group">
+                            <select class="form-control" name="customer_email">
+                                {% for customer in customers %}
+                                    <option value="{{customer[0]}}">{{customer[0]}}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="select-arrow"></span>
+                            <span class="form-label">Customer Email</span>
+                        </div>
                         <div class="form-group">
 							<div class="form-checkbox">
                                 <table class="data-showcase">
@@ -68,8 +80,6 @@
                                     <th>Price</th>
                                     <th>Status</th>
                                     {% for line in data %}
-                                    <label for="customer">
-                                        
                                         
                                         <tr>
                                             <td>
@@ -120,5 +130,7 @@
 			}
 		}
 	</script>
+
+
 </body>
 </html>
