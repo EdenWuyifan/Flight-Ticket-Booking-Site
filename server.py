@@ -612,19 +612,47 @@ def createFlight():
 	error = None
 	return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
 
+
 @app.route('/changeStatus')
+def changeStatusLoad():
+	username = session['username']
+	error = None
+	cursor = conn.cursor()
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline_name = cursor.fetchone()[0]
+
+	# Defaults will be showing all the upcoming flights operated by the airline he/she works for the next 1 year.
+	query = """SELECT * FROM flight WHERE airline_name = '{}' AND departure_time BETWEEN NOW() AND date_add(NOW(), INTERVAL 1 year) ORDER BY departure_time"""
+	cursor.execute(query.format(airline_name))
+	flights = cursor.fetchall()
+	cursor.close()
+	
+	return render_template('as_changeStatus.html', flights=flights, username=username, error=error)
+@app.route('/changeStatus', methods=["POST"])
 def changeStatus():
 	username = session['username']
-	status = request.form['status'] # inputs
-	airline_name = request.form['airline_name']
-	flight_num = request.form['flight_num'] #
+	data_index = int(request.form["data-index"])-1
+	flight_num  = request.form.getlist("flight_num")[data_index]
+	airline_name = request.form.getlist('airline_name')[data_index] 
+	status = request.form.getlist('status')[data_index]
+	error = None
 	
-	cursor = conn.cursor()
+	cursor = conn.cursor()	
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline_name = cursor.fetchone()[0]
+
+	# Defaults will be showing all the upcoming flights operated by the airline he/she works for the next 1 year.
+	query = """SELECT * FROM flight WHERE airline_name = '{}' AND departure_time BETWEEN NOW() AND date_add(NOW(), INTERVAL 1 year) ORDER BY departure_time"""
+	cursor.execute(query.format(airline_name))
+	flights = cursor.fetchall()
+
 	query = """UPDATE flight SET status="{}" WHERE airline_name="{}" AND flight_num={};"""
 	cursor.execute(query.format(status,airline_name,flight_num))
+	conn.commit()
 	cursor.close()
-	error = None
-	return render_template('as_changeStatus.html', username=username, error=error)
+	return render_template('as_changeStatus.html', flights=flights, username=username, error=error)
 
 @app.route('/addAirplane')
 def addAirplaneLoad():
@@ -796,9 +824,6 @@ def sViewReportSearch():
 	start = request.form['start']
 	end = request.form['end']
 	cursor = conn.cursor()
-	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
-	cursor.execute(query.format(username))
-	airline_name = cursor.fetchone()[0]
 
 	# Allow to specify a range of dates
 	query = """SELECT SUM(price) FROM purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE username = '{}'
