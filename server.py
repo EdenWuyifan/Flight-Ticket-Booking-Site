@@ -300,10 +300,14 @@ def cLoadPurchaseInfo():
 	error = None
 	cursor = conn.cursor()
 	if len(date) != 0:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" and DATE(departure_time) = '{}'"""
+		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
+				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" AND 
+				DATE(departure_time) = '{}' GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" """
+		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
+				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" 
+				GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	cursor.close()
