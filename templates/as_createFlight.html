@@ -12,7 +12,11 @@
     <link href="/css/dropdown_style.css" rel="stylesheet"/>
 
     <script>
+        
         window.onload = function() {
+            if(document.getElementById("error_msg").value){
+			    alert(document.getElementById("error_msg").value);
+		    }
             var Ids = document.getElementsByClassName("airplaneIDs");
 		    for(var i=0; i<Ids.length; i++) {
     		    Ids[i].style.display = 'none';
@@ -43,6 +47,7 @@
     </script>
 </head>
 
+<input type="hidden" value='{{error}}' id="error_msg"/>
 <body>
     <header>
         <div class="header-title">

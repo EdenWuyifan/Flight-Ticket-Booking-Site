@@ -15,16 +15,18 @@
 
 		<div class="header-buttons">
 		<ul>
-			<li><a href="/">Test</a></li>
 			<li><a href="/register">Register</a></li>
 			<li><a href="/">Go back</a></li>
 		</ul>
 		</div>
 	</header>
 	
-
+<input type="hidden" value='{{error}}' id="error_msg"/>
 <script>
 	window.onload = function() {
+		if(document.getElementById("error_msg").value){
+			alert(document.getElementById("error_msg").value);
+		}
 		document.getElementsByName("username")[0].style.display = 'none';
 		document.getElementsByName("username")[0].required = false;
 		document.getElementsByName("email")[0].style.display = 'inline-block';
@@ -58,15 +60,15 @@
 						<div class="form-group">
 							<div class="form-checkbox">
 								<label for="customer">
-									<input type="radio" id="customer" name="login-type" value="customer" onclick="javascript:radioCheck()">
+									<input type="radio" id="customer" name="login-type" value="customer" onclick="javascript:radioCheck()" required>
 									<span></span>Customer
 								</label>
 								<label for="booking_agent">
-									<input type="radio" id="booking_agent" name="login-type" value="booking_agent" onclick="javascript:radioCheck()">
+									<input type="radio" id="booking_agent" name="login-type" value="booking_agent" onclick="javascript:radioCheck()" required>
 									<span></span>Booking Agent
 								</label>
 								<label for="airline_staff">
-									<input type="radio" id="airline_staff" name="login-type" value="airline_staff" onclick="javascript:radioCheck()">
+									<input type="radio" id="airline_staff" name="login-type" value="airline_staff" onclick="javascript:radioCheck()" required>
 									<span></span>Airline Staff
 								</label>
 							</div>

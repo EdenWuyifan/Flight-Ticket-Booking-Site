@@ -22,9 +22,12 @@
 		</div>
 	</header>
 	
-
+<input type="hidden" value='{{error}}' id="error_msg"/>
 <script>
 	window.onload = function() {
+		if(document.getElementById("error_msg").value){
+			alert(document.getElementById("error_msg").value);
+		}
 		var C_regis = document.getElementsByClassName("Customer_regi");
 		for(var i=0; i<C_regis.length; i++) {
     		C_regis[i].style.display = 'inline-block';

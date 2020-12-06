@@ -192,18 +192,12 @@ def registerAuth():
 		email = request.form['email-ba']
 		password = request.form['password-ba']
 		error = None
-		if len(email) == 0:
-			error = "Please enter your email!"
-			return render_template('register.html', error = error)
 		cursor = conn.cursor()
 		query = "SELECT * FROM booking_agent WHERE email = '{}'"
 		cursor.execute(query.format(email))
 		data = cursor.fetchone()
 		if(data):
 			error = "This user already exists"
-			return render_template('register.html', error = error)
-		if password=='':
-			error = "Please enter your password!"
 			return render_template('register.html', error = error)
 		else:
 			query = "SELECT booking_agent_id FROM booking_agent"
@@ -602,15 +596,23 @@ def createFlight():
 	price = request.form['price']
 	status = request.form['status']
 	airplane_id = request.form['airplaneId'] #
+	error = None
 
 	cursor = conn.cursor()
-	query = """INSERT INTO `flight` VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");"""
-	cursor.execute(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id))
-	#print(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id), file=sys.stdout)
-	conn.commit()
-	cursor.close()
-	error = None
-	return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
+	query = """ SELECT * FROM flight WHERE airline_name = "{}" AND flight_num = "{}" """
+	cursor.execute(query.format(airline_name, flight_num))
+	result = cursor.fetchone()
+	if result:
+		error = "This flight already exists"
+		return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
+	else:
+		query = """INSERT INTO `flight` VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}");"""
+		cursor.execute(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id))
+		#print(query.format(airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status,airplane_id), file=sys.stdout)
+		conn.commit()
+		cursor.close()
+		#return render_template('as_createFlight.html', username=username, error=error, airlines=airlines, airports=airports, airplanes=airplanes)
+		return render_template('as_success.html', username=username, error=error)
 
 
 @app.route('/changeStatus')
@@ -652,7 +654,8 @@ def changeStatus():
 	cursor.execute(query.format(status,airline_name,flight_num))
 	conn.commit()
 	cursor.close()
-	return render_template('as_changeStatus.html', flights=flights, username=username, error=error)
+	#return render_template('as_changeStatus.html', flights=flights, username=username, error=error)
+	return render_template('as_success.html', username=username, error=error)
 
 @app.route('/addAirplane')
 def addAirplaneLoad():
@@ -688,7 +691,8 @@ def addAirplane():
 	conn.commit()
 	cursor.close()
 	error = None
-	return render_template('as_addAirplane.html', username=username, error=error)
+	#return render_template('as_addAirplane.html', username=username, error=error)
+	return render_template('as_success.html', username=username, error=error)
 
 
 @app.route('/addAirport')
@@ -719,7 +723,8 @@ def addAirport():
 		cursor.execute(query.format(airport_name,airport_city))
 		conn.commit()
 		cursor.close()
-		return render_template('as_addAirport.html', username=username, error=error)
+		#return render_template('as_addAirport.html', username=username, error=error)
+		return render_template('as_success.html', username=username, error=error)
 
 @app.route('/sViewBA')
 def sViewBA():
