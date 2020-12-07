@@ -173,7 +173,7 @@ def registerAuth():
 			cursor.execute(ins.format(email, username, password, building_num, street, city, state, phone_num, passport_number, passport_expiration, passport_country, date_of_birth))
 			conn.commit()
 			cursor.close()
-			return render_template('index.html')
+			return render_template('thanks_for_regi.html')
 	elif login_type == 'airline_staff':
 		username = request.form['username-as']
 		password = request.form['password-as']
@@ -200,7 +200,7 @@ def registerAuth():
 			cursor.execute(ins.format(username, password, first_name, last_name, date_of_birth, airline_name))
 			conn.commit()
 			cursor.close()
-			return render_template('index.html')
+			return render_template('thanks_for_regi.html')
 	elif login_type == 'booking_agent':
 		email = request.form['email-ba']
 		password = request.form['password-ba']
@@ -222,7 +222,7 @@ def registerAuth():
 			cursor.execute(ins.format(email, password, booking_agent_id))
 			conn.commit()
 			cursor.close()
-			return render_template('index.html')
+			return render_template('thanks_for_regi.html')
 
 #Search for upcoming flights
 @app.route('/search', methods=["POST"])
@@ -321,35 +321,12 @@ def cPurchase():
 	error = None
 
 	cursor = conn.cursor()
-	"""
-	query_1 = "SELECT * FROM airport"
-	cursor.execute(query_1)
-	airports = cursor.fetchall()
-	"""
-
-	query_2 = "SELECT * FROM flight WHERE flight_num={}"
-	cursor.execute(query_2.format(flight_num))
-	flight = (cursor.fetchone(),)
-
-	query = "SELECT ticket_id FROM purchases"
-	cursor.execute(query)
-	t_ids = cursor.fetchall()
-	t_ids.sort()
-	if len(t_ids) == 0:
-		ticket_id = 1
-	else:
-		ticket_id = str(int(t_ids[-1][0]) + 1)
-
-	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
-	cursor.execute(query.format(ticket_id, airline_name, flight_num))
-
-	query = """INSERT INTO purchases VALUES ('{}','{}', NULL, DATE(NOW()));"""
-	cursor.execute(query.format(ticket_id, email))
 	query = """SELECT flight_num FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
 			WHERE customer_email='{}' AND departure_time > NOW()) ORDER BY departure_time"""
 	cursor.execute(query.format(email))
 	purchases_have_been_made = cursor.fetchall()
-
+	print((int(flight_num),))
+	print(purchases_have_been_made)
 	if (int(flight_num),) in purchases_have_been_made:
 		error = "You have already booked this flight!"
 		query_1 = "SELECT * FROM airport"
@@ -358,6 +335,30 @@ def cPurchase():
 		cursor.close()
 		return render_template('c_search.html', email=email, error=error, airports=airports)
 	else:
+		"""
+		query_1 = "SELECT * FROM airport"
+		cursor.execute(query_1)
+		airports = cursor.fetchall()
+		"""
+
+		query_2 = "SELECT * FROM flight WHERE flight_num={}"
+		cursor.execute(query_2.format(flight_num))
+		flight = (cursor.fetchone(),)
+
+		query = "SELECT ticket_id FROM purchases"
+		cursor.execute(query)
+		t_ids = cursor.fetchall()
+		t_ids.sort()
+		if len(t_ids) == 0:
+			ticket_id = 1
+		else:
+			ticket_id = str(int(t_ids[-1][0]) + 1)
+
+		query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
+		cursor.execute(query.format(ticket_id, airline_name, flight_num))
+
+		query = """INSERT INTO purchases VALUES ('{}','{}', NULL, DATE(NOW()));"""
+		cursor.execute(query.format(ticket_id, email))
 		conn.commit()
 		cursor.close()
 		return render_template('purchase_success.html', email=email, error=error, flight=flight)
@@ -393,9 +394,8 @@ def cSpending():
 def baViewFlight():
 	email = session['email_b']
 	cursor = conn.cursor()
-	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
-			NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
-	cursor.execute(query.format(email))
+	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent WHERE email='{}') AND customer_email IN (SELECT customer_email FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
+	cursor.execute(query.format(email, email))
 	data = cursor.fetchall()
 	cursor.close()
 	return render_template('ba_viewflight.html', email_b=email, data=data)
@@ -408,9 +408,8 @@ def baViewFlightSearch():
 	cursor = conn.cursor()
 	# Allow to specify a range of dates
 	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent
-	 			WHERE email='{}' AND departure_time BETWEEN '{} 00:00:00' AND '{} 00:00:00') ORDER BY departure_time"""
-	cursor.execute(query.format(email, start, end))
-	print(query.format(email, start, end))
+	 			WHERE email='{}' AND departure_time BETWEEN '{} 00:00:00' AND '{} 00:00:00') AND customer_email IN (SELECT customer_email FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time"""
+	cursor.execute(query.format(email, start, end, email))
 	data = cursor.fetchall()
 	cursor.close()
 	return render_template('ba_viewflight.html', email_b=email, data=data)	
@@ -475,28 +474,6 @@ def baPurchase():
 
 	cursor = conn.cursor()
 
-	query_1 = "SELECT booking_agent_id FROM booking_agent WHERE email='{}'"
-	cursor.execute(query_1.format(email))
-	booking_agent_id = cursor.fetchone()
-
-	query_2 = "SELECT * FROM flight WHERE flight_num={}"
-	cursor.execute(query_2.format(flight_num))
-	flight = (cursor.fetchone(),)
-
-	query = "SELECT ticket_id FROM purchases"
-	cursor.execute(query)
-	t_ids = cursor.fetchall()
-	t_ids.sort()
-	if len(t_ids) == 0:
-		ticket_id = 1
-	else:
-		ticket_id = str(int(t_ids[-1][0]) + 1)
-
-	query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
-	cursor.execute(query.format(ticket_id, airline_name, flight_num))
-	print(ticket_id, airline_name, flight_num)
-	query = """INSERT INTO purchases VALUES ('{}','{}', {}, DATE(NOW()));"""
-	cursor.execute(query.format(ticket_id, customer_email, int(booking_agent_id[0])))
 	query = """SELECT flight_num FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
 			NATURAL JOIN booking_agent WHERE email='{}' and customer_email='{}') ORDER BY departure_time"""
 	cursor.execute(query.format(email, customer_email))
@@ -510,6 +487,29 @@ def baPurchase():
 		cursor.close()
 		return render_template('ba_search.html', email_b=email, error=error, airports=airports)
 	else:
+		query_1 = "SELECT booking_agent_id FROM booking_agent WHERE email='{}'"
+		cursor.execute(query_1.format(email))
+		booking_agent_id = cursor.fetchone()
+
+		query_2 = "SELECT * FROM flight WHERE flight_num={}"
+		cursor.execute(query_2.format(flight_num))
+		flight = (cursor.fetchone(),)
+
+		query = "SELECT ticket_id FROM purchases"
+		cursor.execute(query)
+		t_ids = cursor.fetchall()
+		t_ids.sort()
+		if len(t_ids) == 0:
+			ticket_id = 1
+		else:
+			ticket_id = str(int(t_ids[-1][0]) + 1)
+
+		query = """INSERT INTO ticket VALUES ('{}','{}','{}');"""
+		cursor.execute(query.format(ticket_id, airline_name, flight_num))
+		print(ticket_id, airline_name, flight_num)
+		query = """INSERT INTO purchases VALUES ('{}','{}', {}, DATE(NOW()));"""
+		cursor.execute(query.format(ticket_id, customer_email, int(booking_agent_id[0])))
+	
 		conn.commit()
 		cursor.close()
 		return render_template('purchase_success.html', email_b=email, error=error, flight=flight)
@@ -709,8 +709,8 @@ def addAirplaneLoad():
 	username = session['username']
 	error = None
 	cursor = conn.cursor()
-	query = "SELECT DISTINCT {} FROM airplane"
-	cursor.execute(query.format("airline_name"))
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
 	airlines = cursor.fetchall()
 	
 	cursor.close()
@@ -925,15 +925,19 @@ def sViewDestination():
 def sViewRevenue():
 	username = session['username']
 	cursor = conn.cursor()
-	query = """SELECT SUM(price) FROM flight NATURAL JOIN purchases NATURAL JOIN airline_staff WHERE username = '{}' AND 
-				purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 {}) and NOW() and booking_agent_id IS {}NULL"""
-	cursor.execute(query.format(username, 'month', ''))
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline = cursor.fetchone()[0]
+	print(airline)
+	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
+			WHERE airline_name = '{}' AND (purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 {}) and NOW()) and booking_agent_id IS {}NULL"""
+	cursor.execute(query.format(airline, 'month', ''))
 	direct_month = cursor.fetchall()[0]
-	cursor.execute(query.format(username, 'year', ''))
+	cursor.execute(query.format(airline, 'year', ''))
 	direct_year = cursor.fetchall()[0]
-	cursor.execute(query.format(username, 'month', 'NOT '))
+	cursor.execute(query.format(airline, 'month', 'NOT '))
 	indirect_month = cursor.fetchall()[0]
-	cursor.execute(query.format(username, 'year', 'NOT '))
+	cursor.execute(query.format(airline, 'year', 'NOT '))
 	indirect_year = cursor.fetchall()[0]
 	cursor.close()
 	error = None
