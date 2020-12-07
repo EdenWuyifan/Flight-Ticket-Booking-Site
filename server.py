@@ -904,7 +904,7 @@ def sViewReportSearch():
 	bar_data = []
 	for i in range(0,12):
 		cursor.execute(query.format(username, str(i+1), str(i)))
-		bar_data.append(cursor.fetchone()[0])
+		bar_data.append(cursor.fetchall()[0])
 	cursor.close()
 
 	last_month = bar_data[-1]
