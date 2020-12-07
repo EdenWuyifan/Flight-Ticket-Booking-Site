@@ -929,8 +929,20 @@ def sViewDestination():
 @app.route('/sRevenue')
 def sViewRevenue():
 	username = session['username']
+	cursor = conn.cursor()
+	query = """"SELECT SUM(price) FROM flight NATURAL JOIN purchases NATURAL JOIN airline_staff WHERE username = '{}' AND 
+				purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 {}) and NOW() and booking_agent_is IS {}NULL"""
+	cursor.execute(query.format(username, 'month', ''))
+	direct_month = cursor.fetchall()[0]
+	cursor.execute(query.format(username, 'year', 'NOT '))
+	direct_year = cursor.fetchall()[0]
+	cursor.execute(query.format(username, 'month', ''))
+	indirect_month = cursor.fetchall()[0]
+	cursor.execute(query.format(username, 'year', 'NOT '))
+	indirect_year = cursor.fetchall()[0]
+	cursor.close()
 	error = None
-	return render_template('as_revenue.html', username=username, direct=direct, indirect=indirect, error=error)
+	return render_template('as_revenue.html', username=username, direct_month=direct_month, direct_year=direct_year, indirect_month=indirect_month, indirect_year=indirect_year, error=error)
 
 @app.route('/logout')
 def logout():

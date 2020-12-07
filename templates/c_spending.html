@@ -134,14 +134,14 @@
 
         for (var i = 0; i < 6; i++) {
             spendings.push(document.getElementsByClassName('month-' + (i + 1))[0].value);
-            drawing.push(new dataPoints(Number(spendings[i]), 'month-' + (i + 1)));
+            drawing.push(new dataPoints(Number(spendings[i]), month[d.getMonth() - 1]));
         };
 
         var chart = new CanvasJS.Chart("bar", {
             animationEnabled: true,
             theme: "light2",
             title: {
-                text: "My Spending in the Past 6 Months"
+                text: "Spendings in the Past 6 Months"
             },
             data: [{
                 type: "column",

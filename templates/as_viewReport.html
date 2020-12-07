@@ -2,15 +2,16 @@
 
 <head>
     <title>Airline Staff Portal</title>
-    
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/header_style.css" rel="stylesheet"/>
-    <link href="/css/body_style.css" rel="stylesheet"/>
-    <link href="/css/form_style.css" rel="stylesheet"/>
 
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/header_style.css" rel="stylesheet" />
+    <link href="/css/body_style.css" rel="stylesheet" />
+    <link href="/css/form_style.css" rel="stylesheet" />
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <link href="/css/dropdown_style.css" rel="stylesheet" />
 
 </head>
 
@@ -20,30 +21,30 @@
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
             <h1>B&E AIRLINES</h1>
         </div>
-    
+
         <div class="header-buttons">
-        <ul>
-            <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+            <ul>
+                <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
         </div>
     </header>
 
 
     <script>
-        window.onload = function() {
+        window.onload = function () {
             document.getElementById("data_date").checked = true;
             document.getElementById("data_month").checked = false;
             document.getElementById("data_date_table").style.display = 'inline-block';
             document.getElementById("data_month_table").style.display = 'none';
         }
-    
+
         function radioCheck() {
-            if(document.getElementById("data_date").checked) {
+            if (document.getElementById("data_date").checked) {
                 document.getElementById("data_date_table").style.display = 'inline-block';
                 document.getElementById("data_month_table").style.display = 'none';
             }
-            else if(document.getElementById("data_month").checked) {
+            else if (document.getElementById("data_month").checked) {
                 document.getElementById("data_date_table").style.display = 'none';
                 document.getElementById("data_month_table").style.display = 'inline-block';
             }
@@ -52,12 +53,12 @@
 
 
 
-<div class="container">
+    <div class="container">
 
-    <div class="dd">
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
-                <span class="caret"></span></button>
+        <div class="dd">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
+                    <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="/sViewFlight">View My Flight</a></li>
                     <li><a href="/sViewBA">View All BAs</a></li>
@@ -66,61 +67,124 @@
                     <li><a href="/sViewReport">View Reports</a></li>
                     <li><a href="/sRevenue">Comparison of Revenue Earned</a></li>
                 </ul>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
-                <span class="caret"></span></button>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
+                    <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="/addAirplane">Add Airplane</a></li>
                     <li><a href="/addAirport">Add New Airport</a></li>
                     <li><a href="/createFlight">Create New Flights</a></li>
                 </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button"><a href="/changeStatus">Change
+                        Status</a></button>
+            </div>
         </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button"><a href="/changeStatus">Change Status</a></button>
-        </div>
+
+        <form class="search" action="/sViewReport" method="POST">
+            <div class="form-checkbox" style="padding-bottom: 30px;">
+                <label for="data_month">
+                    <input type="radio" id="data_date" name="visibilities" value="data_date"
+                        onclick="javascript:radioCheck()">
+                    <span></span>Daily Reports
+                </label>
+                <label for="data_year">
+                    <input type="radio" id="data_month" name="visibilities" value="data_month"
+                        onclick="javascript:radioCheck()">
+                    <span></span>Monthly Reports Bar Chart
+                </label>
+            </div>
+
+            <input type="date" name="start" placeholder="From" required />
+            <span class="form-label">From:</span>
+            <input type="date" name="end" placeholder="To" required />
+            <span class="form-label">To:</span>
+            <input type="submit" value=Check />
+        </form>
+
+        <table class="data-showcase" id="data_date_table">
+            <th>Search Date</th>
+            <th>Last Month</th>
+            <th>Last Year</th>
+            <tr>
+                <td>$ {{data_date}}</td>
+                <td>$ {{last_month}}</td>
+                <td>$ {{last_year}}</td>
+            </tr>
+        </table>
+
+        <table class="data-showcase" id="data_month_table">
+
+        </table>
+        <div id="bar" style="left:50%;height:auto;"></div>
+        {% for line in bar_data %}
+        <input type="hidden" class="month-1" value={{line}}>
+        <input type="hidden" class="month-2" value={{line}}>
+        <input type="hidden" class="month-3" value={{line}}>
+        <input type="hidden" class="month-4" value={{line}}>
+        <input type="hidden" class="month-5" value={{line}}>
+        <input type="hidden" class="month-6" value={{line}}>
+        <input type="hidden" class="month-7" value={{line}}>
+        <input type="hidden" class="month-8" value={{line}}>
+        <input type="hidden" class="month-9" value={{line}}>
+        <input type="hidden" class="month-10" value={{line}}>
+        <input type="hidden" class="month-11" value={{line}}>
+        <input type="hidden" class="month-12" value={{line}}>
+        {% endfor %}
     </div>
 
-    <form class="search" action="/sViewReport" method="POST">
-        <div class="form-checkbox" style="padding-bottom: 30px;">
-            <label for="data_month">
-                <input type="radio" id="data_date" name="visibilities" value="data_date" onclick="javascript:radioCheck()">
-                <span></span>Daily Reports
-            </label>
-            <label for="data_year">
-                <input type="radio" id="data_month" name="visibilities" value="data_month" onclick="javascript:radioCheck()">
-                <span></span>Monthly Reports Bar Chart
-            </label>
-        </div>
+    <script type="text/javascript">
+        var d = new Date();
+        var month = new Array();
+        month[0] = "January";
+        month[1] = "February";
+        month[2] = "March";
+        month[3] = "April";
+        month[4] = "May";
+        month[5] = "June";
+        month[6] = "July";
+        month[7] = "August";
+        month[8] = "September";
+        month[9] = "October";
+        month[10] = "November";
+        month[11] = "December";
 
-        <input type="date" name = "start" placeholder="From" required/>
-        <span class="form-label">From:</span>
-        <input type="date" name = "end" placeholder="To" required/>
-        <span class="form-label">To:</span>
-        <input type="submit" value = Check />
-    </form>
+        function dataPoints(y, label) {
+            this.y = y;
+            this.label = label;
+        };
+        var spendings = new Array();
+        var drawing = new Array();
 
-    <table class="data-showcase" id="data_date_table">
-        <th>Search Date</th>
-        <th>Last Month</th>
-        <th>Last Year</th>
-        <tr>
-            <td>$ {{data_date}}</td>
-            <td>$ {{last_month}}</td>
-            <td>$ {{last_year}}</td>
-        </tr>
-    </table>
+        for (var i = 0; i < 12; i++) {
+            spendings.push(document.getElementsByClassName('month-' + (i + 1))[0].value);
+            drawing.push(new dataPoints(Number(spendings[i]), month[d.getMonth() - 1]));
+        };
 
-    <table class="data-showcase" id="data_month_table">
-        
-    </table>
-</div>
+        var chart = new CanvasJS.Chart("bar", {
+            animationEnabled: true,
+            theme: "light2",
+            title: {
+                text: "Tickets Sold Lat Year"
+            },
+            data: [{
+                type: "column",
+                showInLegend: false,
+                dataPoints: drawing
+            }]
+        });
+        chart.render();
 
-<style>
-    .data-showcase th{
-        width: 400px;
-    }
-</style>
+
+    </script>
+
+    <style>
+        .data-showcase th {
+            width: 400px;
+        }
+    </style>
 </body>
 
 

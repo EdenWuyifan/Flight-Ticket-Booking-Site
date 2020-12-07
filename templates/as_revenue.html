@@ -2,15 +2,16 @@
 
 <head>
     <title>Airline Staff Portal</title>
-    
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/header_style.css" rel="stylesheet"/>
-    <link href="/css/body_style.css" rel="stylesheet"/>
-    <link href="/css/form_style.css" rel="stylesheet"/>
 
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/header_style.css" rel="stylesheet" />
+    <link href="/css/body_style.css" rel="stylesheet" />
+    <link href="/css/form_style.css" rel="stylesheet" />
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <link href="/css/dropdown_style.css" rel="stylesheet" />
 
 </head>
 
@@ -20,26 +21,22 @@
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
             <h1>B&E AIRLINES</h1>
         </div>
-    
+
         <div class="header-buttons">
-        <ul>
-            <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+            <ul>
+                <li style="width: 200px; font-weight: 300;">Welcome {{username}} !</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
         </div>
     </header>
 
 
-    <script>
-        window.onload = function() {
-        }
-    </script>
-<div class="container">
+    <div class="container">
 
-    <div class="dd">
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
-                <span class="caret"></span></button>
+        <div class="dd">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">View Datas
+                    <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="/sViewFlight">View My Flight</a></li>
                     <li><a href="/sViewBA">View All BAs</a></li>
@@ -48,34 +45,94 @@
                     <li><a href="/sViewReport">View Reports</a></li>
                     <li><a href="/sRevenue">Comparison of Revenue Earned</a></li>
                 </ul>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
-                <span class="caret"></span></button>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add New
+                    <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="/addAirplane">Add Airplane</a></li>
                     <li><a href="/addAirport">Add New Airport</a></li>
                     <li><a href="/createFlight">Create New Flights</a></li>
                 </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button"><a href="/changeStatus">Change
+                        Status</a></button>
+            </div>
         </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button"><a href="/changeStatus">Change Status</a></button>
-        </div>
+
+        <form class="search">
+            <h1>Comparison of Revenue earned:</h1>
+        </form>
+        <div id="Container1" style="float: left; height: auto; width: 50%;"></div>
+        <input type="hidden" id="direct_month" value={{direct_month}}>
+        <input type="hidden" id="indirect_month" value={{indirect_month}}> 
+
+        <div id="Container2" style="float: right; height: auto; width: 50%;"></div>       
+        <input type="hidden" id="direct_year" value={{direct_year}}>
+        <input type="hidden" id="indirect_year" value={{indirect_year}}>
+
+
+
     </div>
+    <script type="text/javascript">
+        var data = new Array();
+        data.push(document.getElementById(direct_month).value);
+        data.push(document.getElementById(indirect_month).value);
+        data.push(document.getElementById(direct_year).value);
+        data.push(document.getElementById(indirect_year).value);
+        
+        function dataPoints(y, label) {
+            this.y = y;
+            this.label = label;
+        };
+        var drawing1 = new Array();
+        drawing1.push(new dataPoints(Number(data[0]), 'Direct Sales'));
+        drawing1.push(new dataPoints(Number(data[1]), 'Indirect Sales'));
+        var drawing2 = new Array();
+        drawing2.push(new dataPoints(Number(data[2]), 'Direct Sales'));
+        drawing2.push(new dataPoints(Number(data[3]), 'Indirect Sales'));
 
-    <form class="search">
-        <h1>Comparison of Revenue earned:</h1>
-    </form>
+        window.onload = function () {
+            var chart1 = new CanvasJS.Chart("Container1", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Last Month"
+                },
+                data: [{
+                    type: "pie",
+                    startAngle: 180,
+                    yValueFormatString: "##0.00\"%\"",
+                    indexLabel: "{label} {y}",
+                    dataPoints: drawing1
+                }]
+            });
+            var chart2 = new CanvasJS.Chart("Container2", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Last Year"
+                },
+                data: [{
+                    type: "pie",
+                    startAngle: 180,
+                    yValueFormatString: "##0.00\"%\"",
+                    indexLabel: "{label} {y}",
+                    dataPoints: drawing2
+                }]
+            });
 
+            chart1.render();
+            chart2.render();
+        };
+    </script>
 
-
-</div>
-
-<style>
-    .data-showcase th{
-        width: 400px;
-    }
-</style>
+    <style>
+        .data-showcase th {
+            width: 400px;
+        }
+    </style>
 </body>
 
 
