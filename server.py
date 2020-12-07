@@ -38,7 +38,8 @@ def hello():
 #Define route for login
 @app.route('/login')
 def login():
-	return render_template('login.html')
+	error = None
+	return render_template('login.html', error=error)
 
 #Define route for register
 @app.route('/register')
@@ -242,10 +243,10 @@ def search():
 	date = request.form['date']
 	cursor = conn.cursor()
 	if len(date) != 0:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}' and DATE(departure_time) = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" and DATE(departure_time) = '{}' """
 		cursor.execute(query.format(source, destination, date))
 	else: # user didn't enter a date
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = '{}'"""
+		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" """
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	cursor.close()
@@ -310,8 +311,16 @@ def cLoadPurchaseInfo():
 				GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
-	cursor.close()
-	return render_template('c_purchase.html', email=email, error=error, data=data)
+	if source == destination:
+		error="Source and Destination connot be the same!"
+		query_1 = "SELECT * FROM airport"
+		cursor.execute(query_1)
+		airports = cursor.fetchall()
+		cursor.close()
+		return render_template('c_search.html', email=email, error=error, airports=airports)
+	else:
+		cursor.close()
+		return render_template('c_purchase.html', email=email, error=error, data=data)
 
 @app.route('/cPurchase', methods=["POST"])
 def cPurchase():
@@ -346,9 +355,22 @@ def cPurchase():
 
 	query = """INSERT INTO purchases VALUES ('{}','{}', NULL, DATE(NOW()));"""
 	cursor.execute(query.format(ticket_id, email))
-	conn.commit()
-	cursor.close()
-	return render_template('purchase_success.html', email=email, error=error, flight=flight)
+	query = """SELECT flight_num FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
+			WHERE customer_email='{}' AND departure_time > NOW()) ORDER BY departure_time"""
+	cursor.execute(query.format(email))
+	purchases_have_been_made = cursor.fetchall()
+
+	if (int(flight_num),) in purchases_have_been_made:
+		error = "You have already booked this flight!"
+		query_1 = "SELECT * FROM airport"
+		cursor.execute(query_1)
+		airports = cursor.fetchall()
+		cursor.close()
+		return render_template('c_search.html', email=email, error=error, airports=airports)
+	else:
+		conn.commit()
+		cursor.close()
+		return render_template('purchase_success.html', email=email, error=error, flight=flight)
 
 @app.route('/cSpending')
 def cSpending():
@@ -423,19 +445,34 @@ def baLoadPurchaseInfo():
 	destination = request.form['destination']
 	date = request.form['date'] #
 	error = None
+	
 	cursor = conn.cursor()
 	query_1 = "SELECT * FROM customer"
 	cursor.execute(query_1)
 	customers = cursor.fetchall()
+
 	if len(date) != 0:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" and DATE(departure_time) = '{}'"""
+		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
+				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" AND 
+				DATE(departure_time) = '{}' GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT * FROM flight WHERE departure_airport = "{}" and arrival_airport = "{}" """
+		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
+				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" 
+				GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
-	cursor.close()
-	return render_template('ba_purchase.html', email_b=email, error=error, data=data, customers=customers)
+	
+	if source == destination:
+		error = "Source and Destination cannot be the same!"
+		query_1 = "SELECT * FROM airport"
+		cursor.execute(query_1)
+		airports = cursor.fetchall()
+		cursor.close()
+		return render_template('ba_search.html', email_b=email, error=error, airports=airports)
+	else:
+		cursor.close()
+		return render_template('ba_purchase.html', email_b=email, error=error, data=data, customers=customers)
 
 @app.route('/baPurchase', methods=["POST"])
 def baPurchase():
@@ -470,9 +507,22 @@ def baPurchase():
 	print(ticket_id, airline_name, flight_num)
 	query = """INSERT INTO purchases VALUES ('{}','{}', {}, DATE(NOW()));"""
 	cursor.execute(query.format(ticket_id, customer_email, int(booking_agent_id[0])))
-	conn.commit()
-	cursor.close()
-	return render_template('purchase_success.html', email_b=email, error=error, flight=flight)
+	query = """SELECT flight_num FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
+			NATURAL JOIN booking_agent WHERE email='{}' and customer_email='{}') ORDER BY departure_time"""
+	cursor.execute(query.format(email, customer_email))
+	purchases_have_been_made = cursor.fetchall()
+
+	if (int(flight_num),) in purchases_have_been_made:
+		error = "Your customer have already booked this flight!"
+		query_1 = "SELECT * FROM airport"
+		cursor.execute(query_1)
+		airports = cursor.fetchall()
+		cursor.close()
+		return render_template('ba_search.html', email_b=email, error=error, airports=airports)
+	else:
+		conn.commit()
+		cursor.close()
+		return render_template('purchase_success.html', email_b=email, error=error, flight=flight)
 
 
 @app.route('/baComission')
@@ -482,9 +532,12 @@ def baComission():
 	query = """SELECT SUM(price), COUNT(ticket_id) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight 
 			WHERE purchase_date BETWEEN date_sub(NOW(), INTERVAL 30 day) and NOW() GROUP BY email HAVING email = '{}'"""
 	cursor.execute(query.format(email))
-	total_com, num_tickets = cursor.fetchone()
+	try:
+		total_com, num_tickets = cursor.fetchone()
+		data = ([total_com, total_com/num_tickets, num_tickets],)
+	except:
+		data = ([0, 0, 0],)
 	cursor.close()
-	data = ([total_com, total_com/num_tickets, num_tickets],)
 	print(data)
 	return render_template('ba_comission.html', email_b=email, data=data)
 @app.route('/baComission',methods=["POST"])
@@ -881,6 +934,10 @@ def logout():
 		session.pop('email_b')
 	else:
 		session.pop('username')
+	return render_template('goodbye.html')
+	
+@app.route('/goodbye')
+def goodbye():
 	return redirect('/')
 	
 app.secret_key = 'some key that you will never guess'

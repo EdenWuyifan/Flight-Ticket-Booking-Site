@@ -12,6 +12,15 @@
     
 </head>
 <body>
+    <input type="hidden" value='{{error}}' id="error_msg"/>
+    <script>
+        window.onload = function() {
+            if(document.getElementById("error_msg").value!="None"){
+                alert(document.getElementById("error_msg").value);
+            }
+        }
+    </script>
+    
     <header>
         <div class="header-title">
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">

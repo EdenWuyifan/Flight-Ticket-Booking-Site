@@ -9,12 +9,17 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="/css/dropdown_style.css" rel="stylesheet"/>
     <script src="/js/jquery.min.js"></script>
-    <script type="text/javascript">
-        window.onload = function() {
-        }
-    </script>
+    
 </head>
 <body>
+    <input type="hidden" value='{{error}}' id="error_msg"/>
+    <script>
+        window.onload = function() {
+            if(document.getElementById("error_msg").value!="None"){
+                alert(document.getElementById("error_msg").value);
+            }
+        }
+    </script>
     <header>
         <div class="header-title">
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
@@ -23,7 +28,7 @@
     
         <div class="header-buttons">
         <ul>
-            <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
+            <li style="width: 500px; font-weight: 300;">Welcome {{email_b}} !</li>
 			<li><a href="/logout">Logout</a></li>
         </ul>
         </div>
@@ -60,7 +65,7 @@
                     </div>
                     <form action="/baPurchaseSearch" method="POST">
                         <div class="form-group">
-                            <select class="form-control" name="source">
+                            <select class="form-control" name="source" required>
                                 {% for airport in airports %}
                                     <option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
                                 {% endfor %}
@@ -69,7 +74,7 @@
                             <span class="form-label">Flying From</span>
                         </div>
                         <div class="form-group">
-                            <select class="form-control" name="destination">
+                            <select class="form-control" name="destination" required>
                                 {% for airport in airports %}
                                     <option value="{{airport[0]}}">{{airport[0]}}, {{airport[1]}}</option>
                                 {% endfor %}

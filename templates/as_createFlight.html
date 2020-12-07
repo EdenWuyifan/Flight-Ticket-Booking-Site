@@ -11,43 +11,43 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="/css/dropdown_style.css" rel="stylesheet"/>
 
-    <script>
-        
-        window.onload = function() {
-            if(document.getElementById("error_msg").value){
-			    alert(document.getElementById("error_msg").value);
-		    }
-            var Ids = document.getElementsByClassName("airplaneIDs");
-		    for(var i=0; i<Ids.length; i++) {
-    		    Ids[i].style.display = 'none';
-		    }
-        }
-        function plane_ID_check(){
-            var myselect=document.getElementsByName("airline")[0];
-            var index=myselect.selectedIndex;
-
-            var al = myselect.options[index].text;
-            var Ids = document.getElementsByClassName("airplaneIDs");
-		    for(var i=0; i<Ids.length; i++) {
-    		    Ids[i].style.display = 'none';
-		    }
-            var Ids = document.getElementsByClassName(al);
-            for(var i=0; i<Ids.length; i++) {
-    		    Ids[i].style.display = 'inline';
-		    }
-        } 
-        function checkSubmit(){
-	        if(document.getElementsByName("departureAirport")[0].value==document.getElementsByName("arrivalAirport")[0].value){
-                alert("Airports cannot be the same!");
-            }
-            if(document.getElementsByName("departureTime")[0].value==document.getElementsByName("arrivalTime")[0].value){
-                alert("Times cannot be the same!");
-            }
-        }
-    </script>
 </head>
-
 <input type="hidden" value='{{error}}' id="error_msg"/>
+<script>
+        
+    window.onload = function() {
+        if(document.getElementById("error_msg").value!="None"){
+            alert(document.getElementById("error_msg").value);
+        }
+        var Ids = document.getElementsByClassName("airplaneIDs");
+        for(var i=0; i<Ids.length; i++) {
+            Ids[i].style.display = 'none';
+        }
+    }
+    function plane_ID_check(){
+        var myselect=document.getElementsByName("airline")[0];
+        var index=myselect.selectedIndex;
+
+        var al = myselect.options[index].text;
+        var Ids = document.getElementsByClassName("airplaneIDs");
+        for(var i=0; i<Ids.length; i++) {
+            Ids[i].style.display = 'none';
+        }
+        var Ids = document.getElementsByClassName(al);
+        for(var i=0; i<Ids.length; i++) {
+            Ids[i].style.display = 'inline';
+        }
+    } 
+    function checkSubmit(){
+        if(document.getElementsByName("departureAirport")[0].value==document.getElementsByName("arrivalAirport")[0].value){
+            alert("Airports cannot be the same!");
+        }
+        if(document.getElementsByName("departureTime")[0].value==document.getElementsByName("arrivalTime")[0].value){
+            alert("Times cannot be the same!");
+        }
+    }
+</script>
+
 <body>
     <header>
         <div class="header-title">

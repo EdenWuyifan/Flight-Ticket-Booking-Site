@@ -22,7 +22,7 @@
     
         <div class="header-buttons">
         <ul>
-            <li style="width: 300px; font-weight: 300;">Welcome {{email_b}} !</li>
+            <li style="width: 500px; font-weight: 300;">Welcome {{email_b}} !</li>
 			<li><a href="/logout">Logout</a></li>
         </ul>
         </div>
@@ -54,18 +54,18 @@
         <div class="container">
             <div class="row">
                 <div class="booking-form" style="max-width: 100%;">
-                    <div class="form-header">
+                    <div class="form-header" style="font-family: 'Teko', sans-serif; font-weight: 700;">
                         <h1>Book Your Flight</h1>
                     </div>
                     <form action='/baPurchase', method="POST">
-                        <div class="form-group">
-                            <select class="form-control" name="customer_email">
+                        <div class="form-group search" style="padding-top: 30px; padding-bottom: 0;">
+                            <select class="form-control" name="customer_email" style="width: 300px;">
                                 {% for customer in customers %}
                                     <option value="{{customer[0]}}">{{customer[0]}}</option>
                                 {% endfor %}
                             </select>
                             <span class="select-arrow"></span>
-                            <span class="form-label">Customer Email</span>
+                            <span class="form-label" style="top: -50px; left: -540px;">Customer Email</span>
                         </div>
                         <div class="form-group">
 							<div class="form-checkbox">

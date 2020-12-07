@@ -24,7 +24,7 @@
 <input type="hidden" value='{{error}}' id="error_msg"/>
 <script>
 	window.onload = function() {
-		if(document.getElementById("error_msg").value){
+		if(document.getElementById("error_msg").value!="None"){
 			alert(document.getElementById("error_msg").value);
 		}
 		document.getElementsByName("username")[0].style.display = 'none';
