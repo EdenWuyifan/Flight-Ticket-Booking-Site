@@ -291,14 +291,11 @@ def cLoadPurchaseInfo():
 	error = None
 	cursor = conn.cursor()
 	if len(date) != 0:
-		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
-				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" AND 
-				DATE(departure_time) = '{}' GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
+		query = """SELECT f.airline_name, f.flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, f.airplane_id FROM flight as f left JOIN ticket as t on f.airline_name=t.airline_name and f.flight_num=t.flight_num RIGHT JOIN airplane as p on f.airline_name=p.airline_name and f.airplane_id=p.airplane_id WHERE departure_airport = "{}" and arrival_airport = "{}" AND 
+				DATE(departure_time) = '{}' group by f.airline_name, f.flight_num, p.seats HAVING p.seats > COUNT(t.ticket_id)"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
-				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" 
-				GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
+		query = """SELECT f.airline_name, f.flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, f.airplane_id FROM flight as f left JOIN ticket as t on f.airline_name=t.airline_name and f.flight_num=t.flight_num RIGHT JOIN airplane as p on f.airline_name=p.airline_name and f.airplane_id=p.airplane_id WHERE departure_airport = "{}" and arrival_airport = "{}" group by f.airline_name, f.flight_num, p.seats HAVING p.seats > COUNT(t.ticket_id)"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	if source == destination:
@@ -441,14 +438,10 @@ def baLoadPurchaseInfo():
 	customers = cursor.fetchall()
 
 	if len(date) != 0:
-		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
-				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" AND 
-				DATE(departure_time) = '{}' GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
+		query = """SELECT f.airline_name, f.flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, f.airplane_id FROM flight as f left JOIN ticket as t on f.airline_name=t.airline_name and f.flight_num=t.flight_num RIGHT JOIN airplane as p on f.airline_name=p.airline_name and f.airplane_id=p.airplane_id WHERE departure_airport = "{}" and arrival_airport = "{}" AND DATE(departure_time) = '{}' group by f.airline_name, f.flight_num, p.seats HAVING p.seats > COUNT(t.ticket_id)"""
 		cursor.execute(query.format(source, destination, date))
 	else:
-		query = """SELECT airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id
-				FROM flight NATURAL JOIN ticket NATURAL JOIN airplane WHERE departure_airport = "{}" and arrival_airport = "{}" 
-				GROUP BY airline_name, flight_num, seats HAVING seats > COUNT(ticket_id)"""
+		query = """SELECT f.airline_name, f.flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, f.airplane_id FROM flight as f left JOIN ticket as t on f.airline_name=t.airline_name and f.flight_num=t.flight_num RIGHT JOIN airplane as p on f.airline_name=p.airline_name and f.airplane_id=p.airplane_id WHERE departure_airport = "{}" and arrival_airport = "{}" group by f.airline_name, f.flight_num, p.seats HAVING p.seats > COUNT(t.ticket_id)"""
 		cursor.execute(query.format(source, destination))
 	data = cursor.fetchall()
 	
