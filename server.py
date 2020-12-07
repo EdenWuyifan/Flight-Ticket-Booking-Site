@@ -44,7 +44,13 @@ def login():
 #Define route for register
 @app.route('/register')
 def register():
-	return render_template('register.html')
+	error = None
+	cursor = conn.cursor()
+	query = "SELECT * FROM airline"
+	cursor.execute(query)
+	airlines = cursor.fetchall()
+	cursor.close()
+	return render_template('register.html', airlines=airlines, error=error)
 
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
@@ -57,7 +63,7 @@ def loginAuth():
 		password = request.form['password']
 
 		cursor = conn.cursor()
-		query = "SELECT * FROM {} WHERE username = '{}' and password = '{}'"
+		query = "SELECT * FROM {} WHERE username = '{}' and password = md5('{}')"
 		cursor.execute(query.format(login_type, username, password))
 
 		data = cursor.fetchone()
@@ -76,7 +82,7 @@ def loginAuth():
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
-		query = "SELECT * FROM {} WHERE email = '{}' and password = '{}'"
+		query = "SELECT * FROM {} WHERE email = '{}' and password = md5('{}')"
 		cursor.execute(query.format(login_type, email, password))
 		#stores the results in a variable
 		data = cursor.fetchone()
@@ -99,7 +105,7 @@ def loginAuth():
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
-		query = "SELECT * FROM {} WHERE email = '{}' and password = '{}'"
+		query = "SELECT * FROM {} WHERE email = '{}' and password = md5('{}')"
 		cursor.execute(query.format(login_type, email, password))
 		#stores the results in a variable
 		data = cursor.fetchone()
@@ -122,6 +128,12 @@ def loginAuth():
 def registerAuth():
     #grabs information from the forms
 	login_type = request.form['login-type']
+	cursor = conn.cursor()
+	query = "SELECT * FROM airline"
+	cursor.execute(query)
+	airlines = cursor.fetchall()
+	cursor.close()
+	
 
 	if login_type == 'customer':
 		email = request.form['email']
@@ -140,7 +152,7 @@ def registerAuth():
 		error = None
 		if len(email) == 0:
 			error = "Please enter your email!"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		#cursor used to send queries
 		cursor = conn.cursor()
 		#executes query
@@ -152,12 +164,12 @@ def registerAuth():
 		if(data):
 		#If the previous query returns data, then user exists
 			error = "This user already exists"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		if username=='' or password=='' or building_num=='' or street=='' or city=='' or state=='' or phone_num=='' or passport_number=='' or passport_expiration=='' or passport_country=='' or date_of_birth=='':
 			error = "Please fill out all your information!"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		else:
-			ins = "INSERT INTO customer VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+			ins = "INSERT INTO customer VALUES('{}', '{}', md5('{}'), '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
 			cursor.execute(ins.format(email, username, password, building_num, street, city, state, phone_num, passport_number, passport_expiration, passport_country, date_of_birth))
 			conn.commit()
 			cursor.close()
@@ -172,19 +184,19 @@ def registerAuth():
 		error = None
 		if len(username) == 0:
 			error = "Please enter your username!"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		cursor = conn.cursor()
 		query = "SELECT * FROM airline_staff WHERE username = '{}'"
 		cursor.execute(query.format(username))
 		data = cursor.fetchone()
 		if(data):
 			error = "This user already exists"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		if password=='' or first_name=='' or last_name=='' or date_of_birth=='' or airline_name=='':
 			error = "Please fill out all your information!"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		else:
-			ins = "INSERT INTO airline_staff VALUES('{}', '{}', '{}', '{}', '{}', '{}')"
+			ins = "INSERT INTO airline_staff VALUES('{}', md5('{}'), '{}', '{}', '{}', '{}')"
 			cursor.execute(ins.format(username, password, first_name, last_name, date_of_birth, airline_name))
 			conn.commit()
 			cursor.close()
@@ -199,41 +211,19 @@ def registerAuth():
 		data = cursor.fetchone()
 		if(data):
 			error = "This user already exists"
-			return render_template('register.html', error = error)
+			return render_template('register.html', airlines=airlines, error=error)
 		else:
 			query = "SELECT booking_agent_id FROM booking_agent"
 			cursor.execute(query)
 			BA_ids = cursor.fetchall()
 			booking_agent_id = str(int(BA_ids[-1][0]) + 1)
 			
-			ins = "INSERT INTO booking_agent VALUES('{}', '{}', '{}')"
+			ins = "INSERT INTO booking_agent VALUES('{}', md5('{}'), '{}')"
 			cursor.execute(ins.format(email, password, booking_agent_id))
 			conn.commit()
 			cursor.close()
 			return render_template('index.html')
 
-#Match input of city/airport to the corresponding airport
-'''
-@app.route('/airport')
-def airport(name):
-	cursor = conn.cursor()
-	query = """SELECT airport_name FROM airport WHERE airport_name = "{}" """
-	cursor.execute(query.format(name))
-	data = cursor.fetchone()
-	if data: # if the input is a airport name
-		cursor.close()
-		return(name)
-	else:
-		query = """SELECT airport_name FROM airport WHERE airport_city = "{}" """
-		cursor.execute(query.format(name))
-		data = cursor.fetchone()
-		cursor.close()
-		error = None
-		if data: # if the input is a city name
-			return(data[0])
-		else: # if the input is invalid
-			return error
-'''
 #Search for upcoming flights
 @app.route('/search', methods=["POST"])
 def search():
@@ -403,7 +393,7 @@ def cSpending():
 def baViewFlight():
 	email = session['email_b']
 	cursor = conn.cursor()
-	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
+	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
 			NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
 	cursor.execute(query.format(email))
 	data = cursor.fetchall()
@@ -417,7 +407,7 @@ def baViewFlightSearch():
 	end = request.form['end']
 	cursor = conn.cursor()
 	# Allow to specify a range of dates
-	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent
+	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent
 	 			WHERE email='{}' AND departure_time BETWEEN '{} 00:00:00' AND '{} 00:00:00') ORDER BY departure_time"""
 	cursor.execute(query.format(email, start, end))
 	print(query.format(email, start, end))
@@ -893,7 +883,6 @@ def sViewReportSearch():
 	cursor.execute(query.format(username, start, end))
 	data_date = cursor.fetchone()[0]
 
-	cursor = conn.cursor()
 	query = """SELECT SUM(price) FROM purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE username = '{}'
 			AND purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 year) and NOW()"""
 	cursor.execute(query.format(username))
@@ -904,7 +893,7 @@ def sViewReportSearch():
 	bar_data = []
 	for i in range(0,12):
 		cursor.execute(query.format(username, str(i+1), str(i)))
-		bar_data.append(cursor.fetchall()[0])
+		bar_data.append(cursor.fetchone()[0])
 	cursor.close()
 
 	last_month = bar_data[-1]
@@ -922,6 +911,12 @@ def sViewDestination():
 	last_3months = cursor.fetchall()
 	cursor.execute(query.format(username, '1 year'))
 	last_year = cursor.fetchall()
+	if len(last_3months)<3:
+		for i in range(3 - len(last_3months)):
+			last_3months += ('',)
+	if len(last_year)<3:
+		for i in range(3 - len(last_year)):
+			last_year += ('',)
 	cursor.close()
 	error = None
 	return render_template('as_viewDestination.html', username=username, last_year=last_year, last_3months=last_3months, error=error)
@@ -930,13 +925,13 @@ def sViewDestination():
 def sViewRevenue():
 	username = session['username']
 	cursor = conn.cursor()
-	query = """"SELECT SUM(price) FROM flight NATURAL JOIN purchases NATURAL JOIN airline_staff WHERE username = '{}' AND 
-				purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 {}) and NOW() and booking_agent_is IS {}NULL"""
+	query = """SELECT SUM(price) FROM flight NATURAL JOIN purchases NATURAL JOIN airline_staff WHERE username = '{}' AND 
+				purchase_date BETWEEN date_sub(NOW(), INTERVAL 1 {}) and NOW() and booking_agent_id IS {}NULL"""
 	cursor.execute(query.format(username, 'month', ''))
 	direct_month = cursor.fetchall()[0]
-	cursor.execute(query.format(username, 'year', 'NOT '))
+	cursor.execute(query.format(username, 'year', ''))
 	direct_year = cursor.fetchall()[0]
-	cursor.execute(query.format(username, 'month', ''))
+	cursor.execute(query.format(username, 'month', 'NOT '))
 	indirect_month = cursor.fetchall()[0]
 	cursor.execute(query.format(username, 'year', 'NOT '))
 	indirect_year = cursor.fetchall()[0]

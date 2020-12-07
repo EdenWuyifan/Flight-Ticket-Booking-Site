@@ -32,12 +32,6 @@
 
 
     <script>
-        window.onload = function () {
-            document.getElementById("data_date").checked = true;
-            document.getElementById("data_month").checked = false;
-            document.getElementById("data_date_table").style.display = 'inline-block';
-            document.getElementById("data_month_table").style.display = 'none';
-        }
 
         function radioCheck() {
             if (document.getElementById("data_date").checked) {
@@ -109,7 +103,7 @@
             <th>Last Month</th>
             <th>Last Year</th>
             <tr>
-                <td>{{data_date}}</td>
+                <td>$ {{data_date}}</td>
                 <td>$ {{last_month}}</td>
                 <td>$ {{last_year}}</td>
             </tr>
@@ -186,6 +180,10 @@
 
     <script type="text/javascript">
         window.onload = function () {
+            document.getElementById("data_date").checked = true;
+            document.getElementById("data_month").checked = false;
+            document.getElementById("data_date_table").style.display = 'inline-block';
+            document.getElementById("data_month_table").style.display = 'none';
             var d = new Date();
             var month = new Array();
             month[0] = "January";
@@ -239,6 +237,12 @@
                 }]
             });
             chart.render();
+            tds = document.getElementsByTagName("TD");
+            for(var i = 0; i < tds.length; i++){
+                if(tds[i].innerHTML == "$ None"){
+                    tds[i].innerHTML = "$ 0";
+                }
+            }
         };
 
 

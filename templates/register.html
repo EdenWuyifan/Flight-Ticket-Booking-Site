@@ -25,7 +25,7 @@
 <input type="hidden" value='{{error}}' id="error_msg"/>
 <script>
 	window.onload = function() {
-		if(document.getElementById("error_msg").value){
+		if(document.getElementById("error_msg").value != "None"){
 			alert(document.getElementById("error_msg").value);
 		}
 		var C_regis = document.getElementsByClassName("Customer_regi");
@@ -205,7 +205,11 @@
 							<span class="form-label">Date of Birth</span>
 						</div>
 						<div class="form-group">
-							<input class="form-control Airline_Staff_regi" type="text" name="airline_name" required/>
+							<select class="form-control" name="airline_name">
+								{% for airline in airlines %}
+									<option value="{{airline[0]}}">{{airline[0]}}</option>
+								{% endfor %}
+							</select>
 							<span class="form-label">Airline Name</span>
 						</div>
 

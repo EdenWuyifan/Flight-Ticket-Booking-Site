@@ -65,33 +65,35 @@
             <h1>Comparison of Revenue earned:</h1>
         </form>
         <div id="Container1" style="float: left; height: auto; width: 50%;"></div>
-        <input type="hidden" id="direct_month" value={{direct_month}}>
-        <input type="hidden" id="indirect_month" value={{indirect_month}}> 
+        <input type="hidden" id="direct_month" value={{direct_month[0]}}>
+        <input type="hidden" id="indirect_month" value={{indirect_month[0]}}> 
 
         <div id="Container2" style="float: right; height: auto; width: 50%;"></div>       
-        <input type="hidden" id="direct_year" value={{direct_year}}>
-        <input type="hidden" id="indirect_year" value={{indirect_year}}>
+        <input type="hidden" id="direct_year" value={{direct_year[0]}}>
+        <input type="hidden" id="indirect_year" value={{indirect_year[0]}}>
 
 
 
     </div>
     <script type="text/javascript">
-        var data = new Array();
-        data.push(document.getElementById(direct_month).value);
-        data.push(document.getElementById(indirect_month).value);
-        data.push(document.getElementById(direct_year).value);
-        data.push(document.getElementById(indirect_year).value);
+        m1 = Number(document.getElementById("direct_month").value);
+        m2 = Number(document.getElementById("indirect_month").value);
+        y1 = Number(document.getElementById("direct_year").value);
+        y2 = Number(document.getElementById("indirect_year").value);
+
+        console.log(m1);
+        console.log(m1+m2);
         
         function dataPoints(y, label) {
             this.y = y;
             this.label = label;
         };
         var drawing1 = new Array();
-        drawing1.push(new dataPoints(Number(data[0]), 'Direct Sales'));
-        drawing1.push(new dataPoints(Number(data[1]), 'Indirect Sales'));
+        drawing1.push(new dataPoints(m1/(m1+m2)*100, 'Direct Sales'));
+        drawing1.push(new dataPoints(m2/(m1+m2)*100, 'Indirect Sales'));
         var drawing2 = new Array();
-        drawing2.push(new dataPoints(Number(data[2]), 'Direct Sales'));
-        drawing2.push(new dataPoints(Number(data[3]), 'Indirect Sales'));
+        drawing2.push(new dataPoints(y1/(y1+y2)*100, 'Direct Sales'));
+        drawing2.push(new dataPoints(y2/(y1+y2)*100, 'Indirect Sales'));
 
         window.onload = function () {
             var chart1 = new CanvasJS.Chart("Container1", {
@@ -103,7 +105,7 @@
                 data: [{
                     type: "pie",
                     startAngle: 180,
-                    yValueFormatString: "##0.00\"%\"",
+                    yValueFormatString: "##0\"%\"",
                     indexLabel: "{label} {y}",
                     dataPoints: drawing1
                 }]
@@ -117,7 +119,7 @@
                 data: [{
                     type: "pie",
                     startAngle: 180,
-                    yValueFormatString: "##0.00\"%\"",
+                    yValueFormatString: "##0\"%\"",
                     indexLabel: "{label} {y}",
                     dataPoints: drawing2
                 }]
