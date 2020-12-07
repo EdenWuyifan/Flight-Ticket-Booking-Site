@@ -927,10 +927,11 @@ def sViewDestination():
 	return render_template('as_viewDestination.html', username=username, last_year=last_year, last_3months=last_3months, error=error)
 
 @app.route('/sRevenue')
-def sViewDestination():
+def sViewRevenue():
 	username = session['username']
 	error = None
 	return render_template('as_revenue.html', username=username, direct=direct, indirect=indirect, error=error)
+
 @app.route('/logout')
 def logout():
 	if 'email' in session:

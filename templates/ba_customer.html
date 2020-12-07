@@ -6,7 +6,7 @@
     <link href="/css/header_style.css" rel="stylesheet" />
     <link href="/css/body_style.css" rel="stylesheet" />
 
-    <script src="https://cdn.anychart.com/releases/8.0.0/js/anychart-base.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="/css/dropdown_style.css" rel="stylesheet" />
     <script src="/js/jquery.min.js"></script>
@@ -56,8 +56,8 @@
             <h1>Your Top Customers Are: </h1>
         </form>
 
-        <div id="Container1"></div>
-        <div id="Container2"></div>
+        <div id="Container1" style="float: left; height: auto; width: 50%;"></div>
+        <div id="Container2" style="float: right; height: auto; width: 50%;"></div>
         {% for col in data1 %}
         <input type="hidden" class="data1" name={{col[0]}} value={{col[1]}}>
         {% endfor %}
@@ -65,46 +65,64 @@
         <input type="hidden" class="data2" name={{col[0]}} value={{col[1]}}>
         {% endfor %}
     </div>
-    <script>
+    <script type="text/javascript">
+        function dataPoints(y, label) {
+            this.y = y;
+            this.label = label;
+        };
+
         const data1 = document.getElementsByClassName("data1");
         var drawing1 = new Array();
         for (var i = 0; i < data1.length; i++) {
-            drawing1.push([data1[i].name, Number(data1[i].value) * 0.1]);
+            drawing1.push(new dataPoints(Number(data1[i].value) * 0.1, data1[i].name));
         };
         for (var i = 0; i < 5 - data1.length; i++) {
-            drawing1.push(['None' + i, 0]);
+            drawing1.push(new dataPoints(0, 'None' + (i+1)));
         };
-        var chart = anychart.column();
-        var d1 = {
-            header: ["Customer", "Commission"],
-            rows: drawing1
-        };
-        chart.data(d1);
-        chart.title("Amount of commission in the last year");
-        chart.container("Container2");
-        chart.draw();
 
         var data2 = document.getElementsByClassName("data2");
         var drawing2 = new Array();
         for (var i = 0; i < data2.length; i++) {
-            drawing2.push([data2[i].name, Number(data2[i].value)]);
+            drawing2.push(new dataPoints(Number(data2[i].value), data2[i].name));
         };
         for (var i = 0; i < 5 - data2.length; i++) {
-            drawing2.push(['None' + i, 0]);
+            drawing2.push(new dataPoints(0, 'None' + (i+1)));
         };
-        var chart2 = anychart.column();
-        var d2 = {
-            header: ["Customer", "Tickets"],
-            rows: drawing2
-        };
-        chart2.data(d2);        
-        chart2.title("Number of tickets bought in the past 6 months");
-        chart2.container("Container1");
-        chart2.draw();
 
+        window.onload = function () {
 
-    </script>
+            var chart1 = new CanvasJS.Chart("Container2", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Commission Received Last Year"
+                },
+                data: [{
+                    type: "column",
+                    showInLegend: false,
+                    //color: "lightblue",
+                    dataPoints: drawing1
+                }]
+            });
+            var chart2 = new CanvasJS.Chart("Container1", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Number of Tickets Purchased in the Past 6 Months"
+                },
+                data: [{
+                    type: "column",
+                    showInLegend: false,
+                    //color: "lightblue",
+                    dataPoints: drawing2
+                }]
+            });
 
+            chart1.render();
+            chart2.render();
+        }
+
+    </script> 
 
 
 

@@ -1,15 +1,16 @@
 <html>
+
 <head>
     <title>Customer Portal</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/header_style.css" rel="stylesheet"/>
-    <link href="/css/body_style.css" rel="stylesheet"/>
-    
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="/css/dropdown_style.css" rel="stylesheet"/>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/header_style.css" rel="stylesheet" />
+    <link href="/css/body_style.css" rel="stylesheet" />
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <link href="/css/dropdown_style.css" rel="stylesheet" />
     <script src="/js/jquery.min.js"></script>
     <script type="text/javascript">
-        window.onload = function() {
+        window.onload = function () {
             var d = new Date();
             var month = new Array();
             month[0] = "January";
@@ -25,26 +26,29 @@
             month[10] = "November";
             month[11] = "December";
             document.getElementById('month-1').innerHTML = month[d.getMonth()];
-            document.getElementById('month-2').innerHTML = month[d.getMonth()-1];
-            document.getElementById('month-3').innerHTML = month[d.getMonth()-2];
-            document.getElementById('month-4').innerHTML = month[d.getMonth()-3];
-            document.getElementById('month-5').innerHTML = month[d.getMonth()-4];
-            document.getElementById('month-6').innerHTML = month[d.getMonth()-5];
+            document.getElementById('month-2').innerHTML = month[d.getMonth() - 1];
+            document.getElementById('month-3').innerHTML = month[d.getMonth() - 2];
+            document.getElementById('month-4').innerHTML = month[d.getMonth() - 3];
+            document.getElementById('month-5').innerHTML = month[d.getMonth() - 4];
+            document.getElementById('month-6').innerHTML = month[d.getMonth() - 5];
+
+
         }
     </script>
 </head>
+
 <body>
     <header>
         <div class="header-title">
             <img src="/images/B&E-icon.png" style="width: 200px; height: 100px;">
             <h1>B&E AIRLINES</h1>
         </div>
-    
+
         <div class="header-buttons">
-        <ul>
-            <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
-			<li><a href="/logout">Logout</a></li>
-        </ul>
+            <ul>
+                <li style="width: 300px; font-weight: 300;">Welcome {{email}} !</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
         </div>
     </header>
 
@@ -52,52 +56,105 @@
 
 
 
-<div class="container">
+    <div class="container">
 
-    <div class="dd">
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cViewFlight">View My Flights</a></button>
+        <div class="dd">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a
+                        href="/cViewFlight">View My Flights</a></button>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">Track
+                        My Spending</a></button>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a
+                        href="/cPurchaseSearch">Search & Purchase</a></button>
+            </div>
         </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="#">Track My Spending</a></button>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><a href="/cPurchaseSearch">Search & Purchase</a></button>
-        </div>
+
+        <form class="search" action="/sViewFlight" method="POST">
+            <h1>Your Spendings Are: </h1>
+        </form>
+
+        <table class="data-showcase">
+            <th>Last Year</th>
+            <th>
+                <div id="month-1"></div>
+            </th>
+            <th>
+                <div id="month-2"></div>
+            </th>
+            <th>
+                <div id="month-3"></div>
+            </th>
+            <th>
+                <div id="month-4"></div>
+            </th>
+            <th>
+                <div id="month-5"></div>
+            </th>
+            <th>
+                <div id="month-6"></div>
+            </th>
+
+
+            <tr>
+                {% for line in last_year %}
+                <td>$ {{line[0]}}</td>
+                {% endfor %}
+                {% for line in bar_data %}
+                <td>$ {{line[0]}}</td>
+                <input type="hidden" class="month-1" value={{line[0]}}>
+                <td>$ {{line[1]}}</td>
+                <input type="hidden" class="month-2" value={{line[1]}}>
+                <td>$ {{line[2]}}</td>
+                <input type="hidden" class="month-3" value={{line[2]}}>
+                <td>$ {{line[3]}}</td>
+                <input type="hidden" class="month-4" value={{line[3]}}>
+                <td>$ {{line[4]}}</td>
+                <input type="hidden" class="month-5" value={{line[4]}}>
+                <td>$ {{line[5]}}</td>
+                <input type="hidden" class="month-6" value={{line[5]}}>
+                {% endfor %}
+            </tr>
+
+        </table>
+
+        <div id="bar" style="left:50%;height:auto;"></div>
     </div>
 
-    <form class="search" action="/sViewFlight" method="POST">
-        <h1>Your Spendings Are: </h1>
-    </form>
+    <script type="text/javascript">
+        function dataPoints(y, label) {
+            this.y = y;
+            this.label = label;
+        };
+        var spendings = new Array();
+        var drawing = new Array();
 
-    <table class="data-showcase">
-        <th>Last Year</th>
-        <th><div id="month-1"></div></th>
-        <th><div id="month-2"></div></th>
-        <th><div id="month-3"></div></th>
-        <th><div id="month-4"></div></th>
-        <th><div id="month-5"></div></th>
-        <th><div id="month-6"></div></th>
-    
-    
-        <tr>
-            {% for line in last_year %}
-                <td>$ {{line[0]}}</td>  
-            {% endfor %}
-            {% for line in bar_data %}
-                <td>$ {{line[0]}}</td>
-                <td>$ {{line[1]}}</td>
-                <td>$ {{line[2]}}</td>
-                <td>$ {{line[3]}}</td>
-                <td>$ {{line[4]}}</td>
-                <td>$ {{line[5]}}</td>
-            {% endfor %}
-        </tr>
-    
-    </table>
-</div>
+        for (var i = 0; i < 6; i++) {
+            spendings.push(document.getElementsByClassName('month-' + (i + 1))[0].value);
+            drawing.push(new dataPoints(Number(spendings[i]), 'month-' + (i + 1)));
+        };
+
+        var chart = new CanvasJS.Chart("bar", {
+            animationEnabled: true,
+            theme: "light2",
+            title: {
+                text: "My Spending in the Past 6 Months"
+            },
+            data: [{
+                type: "column",
+                showInLegend: false,
+                //color: "lightblue",
+                dataPoints: drawing
+            }]
+        });
+        chart.render();
 
 
+    </script>
 
 </body>
+
 </html>
