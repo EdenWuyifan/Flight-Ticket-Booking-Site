@@ -109,73 +109,137 @@
             <th>Last Month</th>
             <th>Last Year</th>
             <tr>
-                <td>$ {{data_date}}</td>
+                <td>{{data_date}}</td>
                 <td>$ {{last_month}}</td>
                 <td>$ {{last_year}}</td>
             </tr>
         </table>
 
         <table class="data-showcase" id="data_month_table">
+            <th>
+                <div id="month-1"></div>
+            </th>
+            <th>
+                <div id="month-2"></div>
+            </th>
+            <th>
+                <div id="month-3"></div>
+            </th>
+            <th>
+                <div id="month-4"></div>
+            </th>
+            <th>
+                <div id="month-5"></div>
+            </th>
+            <th>
+                <div id="month-6"></div>
+            </th>
+            <th>
+                <div id="month-7"></div>
+            </th>
+            <th>
+                <div id="month-8"></div>
+            </th>
+            <th>
+                <div id="month-9"></div>
+            </th>
+            <th>
+                <div id="month-10"></div>
+            </th>
+            <th>
+                <div id="month-11"></div>
+            </th>
+            <th>
+                <div id="month-12"></div>
+            </th>
+            <tr>
+                <td>$ {{bar_data[0]}}</td>
+                <td>$ {{bar_data[1]}}</td>
+                <td>$ {{bar_data[2]}}</td>
+                <td>$ {{bar_data[3]}}</td>
+                <td>$ {{bar_data[4]}}</td>
+                <td>$ {{bar_data[5]}}</td>
+                <td>$ {{bar_data[6]}}</td>
+                <td>$ {{bar_data[7]}}</td>
+                <td>$ {{bar_data[8]}}</td>
+                <td>$ {{bar_data[9]}}</td>
+                <td>$ {{bar_data[10]}}</td>
+                <td>$ {{bar_data[11]}}</td>
+            </tr>
 
         </table>
         <div id="bar" style="left:50%;height:auto;"></div>
-        {% for line in bar_data %}
-        <input type="hidden" class="month-1" value={{line}}>
-        <input type="hidden" class="month-2" value={{line}}>
-        <input type="hidden" class="month-3" value={{line}}>
-        <input type="hidden" class="month-4" value={{line}}>
-        <input type="hidden" class="month-5" value={{line}}>
-        <input type="hidden" class="month-6" value={{line}}>
-        <input type="hidden" class="month-7" value={{line}}>
-        <input type="hidden" class="month-8" value={{line}}>
-        <input type="hidden" class="month-9" value={{line}}>
-        <input type="hidden" class="month-10" value={{line}}>
-        <input type="hidden" class="month-11" value={{line}}>
-        <input type="hidden" class="month-12" value={{line}}>
-        {% endfor %}
+
+        <input type="hidden" class="month-1" value={{bar_data[0]}}>
+        <input type="hidden" class="month-2" value={{bar_data[1]}}>
+        <input type="hidden" class="month-3" value={{bar_data[2]}}>
+        <input type="hidden" class="month-4" value={{bar_data[3]}}>
+        <input type="hidden" class="month-5" value={{bar_data[4]}}>
+        <input type="hidden" class="month-6" value={{bar_data[5]}}>
+        <input type="hidden" class="month-7" value={{bar_data[6]}}>
+        <input type="hidden" class="month-8" value={{bar_data[7]}}>
+        <input type="hidden" class="month-9" value={{bar_data[8]}}>
+        <input type="hidden" class="month-10" value={{bar_data[9]}}>
+        <input type="hidden" class="month-11" value={{bar_data[10]}}>
+        <input type="hidden" class="month-12" value={{bar_data[11]}}>
     </div>
 
     <script type="text/javascript">
-        var d = new Date();
-        var month = new Array();
-        month[0] = "January";
-        month[1] = "February";
-        month[2] = "March";
-        month[3] = "April";
-        month[4] = "May";
-        month[5] = "June";
-        month[6] = "July";
-        month[7] = "August";
-        month[8] = "September";
-        month[9] = "October";
-        month[10] = "November";
-        month[11] = "December";
+        window.onload = function () {
+            var d = new Date();
+            var month = new Array();
+            month[0] = "January";
+            month[1] = "February";
+            month[2] = "March";
+            month[3] = "April";
+            month[4] = "May";
+            month[5] = "June";
+            month[6] = "July";
+            month[7] = "August";
+            month[8] = "September";
+            month[9] = "October";
+            month[10] = "November";
+            month[11] = "December";
+            document.getElementById('month-1').innerHTML = month[d.getMonth()];
+            document.getElementById('month-2').innerHTML = month[d.getMonth() - 1];
+            document.getElementById('month-3').innerHTML = month[d.getMonth() - 2];
+            document.getElementById('month-4').innerHTML = month[d.getMonth() - 3];
+            document.getElementById('month-5').innerHTML = month[d.getMonth() - 4];
+            document.getElementById('month-6').innerHTML = month[d.getMonth() - 5];
+            document.getElementById('month-7').innerHTML = month[d.getMonth() - 6];
+            document.getElementById('month-8').innerHTML = month[d.getMonth() - 7];
+            document.getElementById('month-9').innerHTML = month[d.getMonth() - 8];
+            document.getElementById('month-10').innerHTML = month[d.getMonth() - 9];
+            document.getElementById('month-11').innerHTML = month[d.getMonth() - 10];
+            document.getElementById('month-12').innerHTML = month[d.getMonth() - 11];
 
-        function dataPoints(y, label) {
-            this.y = y;
-            this.label = label;
+            function dataPoints(y, label) {
+                this.y = y;
+                this.label = label;
+            };
+            var spendings = new Array();
+            var drawing = new Array();
+
+            for (var i = 0; i < 12; i++) {
+                spendings.push(document.getElementsByClassName('month-' + (i + 1))[0].value);
+                console.log(i, document.getElementsByClassName('month-' + (i + 1))[0]);
+                drawing.push(new dataPoints(Number(spendings[i]), month[d.getMonth() - i]));
+            };
+
+            var chart = new CanvasJS.Chart("bar", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Tickets Sold Last Year"
+                },
+                data: [{
+                    type: "column",
+                    showInLegend: false,
+                    dataPoints: drawing
+                }]
+            });
+            chart.render();
         };
-        var spendings = new Array();
-        var drawing = new Array();
-
-        for (var i = 0; i < 12; i++) {
-            spendings.push(document.getElementsByClassName('month-' + (i + 1))[0].value);
-            drawing.push(new dataPoints(Number(spendings[i]), month[d.getMonth() - 1]));
-        };
-
-        var chart = new CanvasJS.Chart("bar", {
-            animationEnabled: true,
-            theme: "light2",
-            title: {
-                text: "Tickets Sold Lat Year"
-            },
-            data: [{
-                type: "column",
-                showInLegend: false,
-                dataPoints: drawing
-            }]
-        });
-        chart.render();
 
 
     </script>
