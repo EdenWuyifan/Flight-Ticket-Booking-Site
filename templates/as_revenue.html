@@ -6,6 +6,8 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/header_style.css" rel="stylesheet"/>
     <link href="/css/body_style.css" rel="stylesheet"/>
+    <link href="/css/form_style.css" rel="stylesheet"/>
+
     <script src="/js/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="/css/dropdown_style.css" rel="stylesheet"/>
@@ -30,15 +32,8 @@
 
     <script>
         window.onload = function() {
-            if(document.getElementById("top_customer").value == "False"){
-                document.getElementById("top_banner").style.display="none";
-            }
-        }
-        
-        function radioCheck() {
         }
     </script>
-
 <div class="container">
 
     <div class="dd">
@@ -68,49 +63,19 @@
         </div>
     </div>
 
-    <form class="search" action="/sViewCustomer" method="POST">
-        <div class="form-group" style="margin-bottom: 0;">
-            <select id="customer" class="form-control" name="customer" onchange="javascript:radioCheck()" style="width: 300px; display: inline;">
-                {% for customer in customers %}
-                    <option value="{{customer[0]}}">{{customer[0]}}</option>
-                {% endfor %}
-            </select>
-            <span class="select-arrow"></span>
-            <span class="form-label" style=" top: -25px; left: -300px;">Customer Email:</span>
-            <input type="submit" value = Check />
-        </div>
-        <input type="hidden" value={{is_top}} id="top_customer">
-        <h1 id="top_banner">The Top Most Frequent Cutomer is {{top_customer}}! Here's Their Flights:</h1>
+    <form class="search">
+        <h1>Comparison of Revenue earned:</h1>
     </form>
 
-    <table class="data-showcase">
-        <th>Airline</th>
-        <th>Flight</th>
-        <th>Depart Airport</th>
-        <th>Depart Time</th>
-        <th>Destination</th>
-        <th>Arrival Time</th>
-        <th>Price</th>
-        <th>Status</th>
-        <th>Airplane ID</th>
 
-    {% for line in flights %}
-        <tr>
-            <td>{{line[0]}}</td>
-            <td>{{line[1]}}</td>
-            <td>{{line[2]}}</td>
-            <td>{{line[3]}}</td>
-            <td>{{line[4]}}</td>
-            <td>{{line[5]}}</td>
-            <td>{{line[6]}}</td>
-            <td>{{line[7]}}</td>
-            <td>{{line[8]}}</td>
-            
-        </tr>
-    {% endfor %}
-    </table>
+
 </div>
 
+<style>
+    .data-showcase th{
+        width: 400px;
+    }
+</style>
 </body>
 
 
