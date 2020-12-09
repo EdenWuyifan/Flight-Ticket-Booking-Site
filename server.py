@@ -707,7 +707,7 @@ def addAirplaneLoad():
 	airlines = cursor.fetchall()
 	
 	cursor.close()
-	return render_template('as_addAirplane.html', username=username, error=error, airlines=airlines, )
+	return render_template('as_addAirplane.html', username=username, error=error, airlines=airlines)
 
 @app.route('/addAirplane',methods=["POST"])
 def addAirplane():
@@ -715,9 +715,14 @@ def addAirplane():
 	airline_name = request.form['airline_name'] # inputs
 	seats = request.form['seats'] #
 
+
 	cursor = conn.cursor()
-	query = "SELECT airplane_id FROM airplane"
-	cursor.execute(query)
+	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+	cursor.execute(query.format(username))
+	airline = cursor.fetchone()[0]
+
+	query = """SELECT airplane_id FROM airplane WHERE airline_name = "{}" """
+	cursor.execute(query.format(airline))
 	a_ids = cursor.fetchall()
 	a_ids.sort()
 	if len(a_ids) == 0:
@@ -955,4 +960,4 @@ app.secret_key = 'some key that you will never guess'
 #for changes to go through, TURN OFF FOR PRODUCTION
 
 if __name__ == "__main__":
-	app.run('127.0.0.1', 5010, debug = True)
+	app.run('127.0.0.1', 1203, debug = True)

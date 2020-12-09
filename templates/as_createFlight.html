@@ -106,14 +106,14 @@
 						</div>
                         <form action="/createFlight" method="POST">
 							<div class="form-group">
-                                <input class="form-control" type="number" name="flightNumber">
+                                <input class="form-control" type="number" name="flightNumber" min="0" required>
 								<span class="form-label">Flight Number</span>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <select class="form-control" name="departureAirport">
+                                        <select class="form-control" name="departureAirport" required>
                                             {% for airport in airports %}
                                                 <option value="{{airport[0]}}">{{airport[0]}}</option>
                                             {% endfor %}
@@ -124,7 +124,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input class="form-control" type="datetime-local" name="departureTime">
+                                        <input class="form-control" type="datetime-local" name="departureTime" required>
                                         <span class="form-label">Departure Time</span>
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <select class="form-control" name="arrivalAirport">
+                                        <select class="form-control" name="arrivalAirport" required>
                                             {% for airport in airports %}
                                                 <option value="{{airport[0]}}">{{airport[0]}}</option>
                                             {% endfor %}
@@ -144,7 +144,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input class="form-control" type="datetime-local" name="arrivalTime">
+                                        <input class="form-control" type="datetime-local" name="arrivalTime" required>
                                         <span class="form-label">Arrival Time</span>
                                     </div>
                                 </div>
@@ -153,7 +153,7 @@
 							<div class="row">
 								<div class="col-md-4">
 									<div class="form-group">
-										<select class="form-control" name="airline" onchange="javascript:plane_ID_check()">
+										<select class="form-control" name="airline" onchange="javascript:plane_ID_check()" required>
                                             <option>===Please Select===</option>
                                             {% for airline in airlines %}
                                                 <option value="{{airline[0]}}">{{airline[0]}}</option>
@@ -165,7 +165,7 @@
 								</div>
 								<div class="col-md-4">
 									<div class="form-group">
-										<select class="form-control" name="airplaneId">
+										<select class="form-control" name="airplaneId" required>
                                             {% for id in airplanes %}
                                                 <option class="airplaneIds {{id[0]}}" value="{{id[1]}}">{{id[1]}}</option>
                                             {% endfor %}
@@ -176,7 +176,7 @@
                                 </div>
                                 <div class="col-md-4">
 									<div class="form-group">
-										<select class="form-control" name="status">
+										<select class="form-control" name="status" required>
 											<option value="Upcoming">Upcoming</option>
 											<option value="Delayed">Delayed</option>
 											<option value="In-Progress">In-Progress</option>
@@ -187,7 +187,7 @@
 								</div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" type="number" name="price">
+                                <input class="form-control" type="number" name="price" min="1" required>
                                 <span class="form-label">Ticket Price</span>
                             </div>
 							<div class="form-btn">
