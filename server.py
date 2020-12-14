@@ -587,7 +587,7 @@ def baCustomer():
 #------------------------Ailine Staff Use Case------------------------
 @app.route('/sViewFlight')
 def sViewFlight():
-	if 'email_b' not in session: 
+	if 'username' not in session: 
 		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
@@ -604,7 +604,7 @@ def sViewFlight():
 
 @app.route('/sViewFlight',methods=['POST'])
 def sViewFlightSearch():
-	if 'email_b' not in session: 
+	if 'username' not in session: 
 		return render_template('404.html')
 	username = session['username']
 	start = request.form['start']
@@ -623,7 +623,7 @@ def sViewFlightSearch():
 
 @app.route('/createFlight')
 def loadPage():
-	if 'email_b' not in session: 
+	if 'username' not in session: 
 		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
@@ -1014,6 +1014,12 @@ def logout():
 	
 @app.route('/goodbye')
 def goodbye():
+	if 'email' in session:
+		session.pop('email')
+	elif 'email_b' in session:
+		session.pop('email_b')
+	else:
+		session.pop('username')
 	return redirect('/')
 	
 app.secret_key = 'some key that you will never guess'
@@ -1021,4 +1027,4 @@ app.secret_key = 'some key that you will never guess'
 #for changes to go through, TURN OFF FOR PRODUCTION
 
 if __name__ == "__main__":
-	app.run('127.0.0.1', 1203, debug = True)
+	app.run('127.0.0.1', 1205, debug = True)
