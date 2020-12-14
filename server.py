@@ -245,6 +245,8 @@ def search():
 #--------------------------Customer Use Case--------------------------
 @app.route('/cViewFlight')
 def cViewFlight():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email = session['email']
 	cursor = conn.cursor()
 	query = """SELECT * FROM flight WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases 
@@ -257,6 +259,8 @@ def cViewFlight():
 # Optionally you may include a way for the user to specify a range of dates, specify destination and/or source airport name or city name etc.
 @app.route('/cViewFlight', methods=['POST'])
 def cViewFlightSearch():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email = session['email']
 	start = request.form['start']
 	end = request.form['end']
@@ -272,6 +276,8 @@ def cViewFlightSearch():
 #Customer searches for upcoming flights and purchases tickets
 @app.route('/cPurchaseSearch')
 def cLoadSearch():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email =  session['email']
 	error = None
 
@@ -284,6 +290,8 @@ def cLoadSearch():
 
 @app.route('/cPurchaseSearch', methods=["POST"])
 def cLoadPurchaseInfo():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email = session['email']
 	source = request.form['source'] # inputs
 	destination = request.form['destination']
@@ -311,6 +319,8 @@ def cLoadPurchaseInfo():
 
 @app.route('/cPurchase', methods=["POST"])
 def cPurchase():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email = session['email']
 	data_index = int(request.form["data-index"])-1	
 	flight_num  = request.form.getlist("flight_num")[data_index] # inputs
@@ -362,6 +372,8 @@ def cPurchase():
 
 @app.route('/cSpending')
 def cSpending():
+	if 'email' not in session: 
+		return render_template('404.html')
 	email = session['email']
 	cursor = conn.cursor()
 	query = """SELECT SUM(price) FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE customer_email='{}' AND 
@@ -389,6 +401,8 @@ def cSpending():
 #------------------------Booking Agent Use Case------------------------
 @app.route('/baViewFlight')
 def baViewFlight():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT customer_email,airline_name,flight_num,departure_airport,departure_time,arrival_airport,arrival_time,price,status FROM flight NATURAL JOIN ticket NATURAL JOIN purchases WHERE flight_num IN (SELECT flight_num FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent WHERE email='{}') AND customer_email IN (SELECT customer_email FROM flight NATURAL JOIN ticket NATURAL JOIN purchases NATURAL JOIN booking_agent WHERE email='{}') ORDER BY departure_time""" # AND departure_time > NOW()
@@ -399,6 +413,8 @@ def baViewFlight():
 
 @app.route('/baViewFlight', methods=['POST'])
 def baViewFlightSearch():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	start = request.form['start']
 	end = request.form['end']
@@ -414,6 +430,8 @@ def baViewFlightSearch():
 #Booking agent searches for upcoming flights and purchases tickets for other customers
 @app.route('/baPurchaseSearch')
 def baLoadSearch():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email =  session['email_b']
 	error = None
 
@@ -426,6 +444,8 @@ def baLoadSearch():
 
 @app.route('/baPurchaseSearch', methods=["POST"])
 def baLoadPurchaseInfo():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	source = request.form['source'] # inputs
 	destination = request.form['destination']
@@ -458,6 +478,8 @@ def baLoadPurchaseInfo():
 
 @app.route('/baPurchase', methods=["POST"])
 def baPurchase():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	data_index = int(request.form["data-index"])-1
 	flight_num  = request.form.getlist("flight_num")[data_index] # inputs
@@ -510,6 +532,8 @@ def baPurchase():
 
 @app.route('/baComission')
 def baComission():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT SUM(price), COUNT(ticket_id) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight 
@@ -525,6 +549,8 @@ def baComission():
 	return render_template('ba_comission.html', email_b=email, data=data)
 @app.route('/baComission',methods=["POST"])
 def baComissionSearch():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	start = request.form['start']
 	end = request.form['end']
@@ -543,6 +569,8 @@ def baComissionSearch():
 
 @app.route('/baCustomer')
 def baCustomer():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	email = session['email_b']
 	cursor = conn.cursor()
 	query = """SELECT customer_email, SUM(price) FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE purchase_date 
@@ -559,6 +587,8 @@ def baCustomer():
 #------------------------Ailine Staff Use Case------------------------
 @app.route('/sViewFlight')
 def sViewFlight():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
 	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
@@ -574,6 +604,8 @@ def sViewFlight():
 
 @app.route('/sViewFlight',methods=['POST'])
 def sViewFlightSearch():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	start = request.form['start']
 	end = request.form['end']
@@ -591,6 +623,8 @@ def sViewFlightSearch():
 
 @app.route('/createFlight')
 def loadPage():
+	if 'email_b' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
 	query = "SELECT DISTINCT {} FROM airplane"
@@ -612,7 +646,8 @@ def loadPage():
 
 @app.route('/createFlight',methods=['POST'])
 def createFlight():
-
+	if 'username' not in session: 
+		return render_template('404.html')
 	cursor = conn.cursor()
 	query = "SELECT DISTINCT {} FROM airplane"
 	cursor.execute(query.format("airline_name"))
@@ -657,6 +692,8 @@ def createFlight():
 
 @app.route('/changeStatus')
 def changeStatusLoad():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	error = None
 	cursor = conn.cursor()
@@ -673,6 +710,8 @@ def changeStatusLoad():
 	return render_template('as_changeStatus.html', flights=flights, username=username, error=error)
 @app.route('/changeStatus', methods=["POST"])
 def changeStatus():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	data_index = int(request.form["data-index"])-1
 	flight_num  = request.form.getlist("flight_num")[data_index]
@@ -699,6 +738,8 @@ def changeStatus():
 
 @app.route('/addAirplane')
 def addAirplaneLoad():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	error = None
 	cursor = conn.cursor()
@@ -711,6 +752,8 @@ def addAirplaneLoad():
 
 @app.route('/addAirplane',methods=["POST"])
 def addAirplane():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	airline_name = request.form['airline_name'] # inputs
 	seats = request.form['seats'] #
@@ -742,12 +785,16 @@ def addAirplane():
 
 @app.route('/addAirport')
 def loadAirports():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	error = None
 	return render_template('as_addAirport.html', username=username, error=error)
 
 @app.route('/addAirport',methods=["POST"])
 def addAirport():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	airport_name = request.form['airport_name'] # inputs
 	airport_city = request.form['airport_city'] #
@@ -773,6 +820,8 @@ def addAirport():
 
 @app.route('/sViewBA')
 def sViewBA():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
 	query = """SELECT email FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight NATURAL JOIN airline_staff WHERE purchase_date 
@@ -792,6 +841,8 @@ def sViewBA():
 
 @app.route('/sViewCustomer')
 def sViewCustomer():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	error = None
 	is_top = True
@@ -815,6 +866,8 @@ def sViewCustomer():
 	return render_template('as_viewCustomer.html', is_top=is_top, username=username, top_customer=top_customer, customers=customers, flights=flights, error=error)
 @app.route('/sViewCustomer', methods=["POST"])
 def sViewCustomerSearch():
+	if 'username' not in session: 
+		return render_template('404.html')
 	customer = request.form.get('customer') # input
 	print(customer)
 	username = session['username']
@@ -843,6 +896,8 @@ def sViewCustomerSearch():
 
 @app.route('/sViewReport')
 def sViewReport():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 
 	# To do: range of dates
@@ -868,6 +923,8 @@ def sViewReport():
 
 @app.route('/sViewReport',methods=["POST"])
 def sViewReportSearch():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 
 	# To do: range of dates
@@ -900,6 +957,8 @@ def sViewReportSearch():
 
 @app.route('/sViewDestination')
 def sViewDestination():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
 	query = """SELECT arrival_airport FROM ticket NATURAL JOIN flight NATURAL JOIN purchases NATURAL JOIN airline_staff 
@@ -921,6 +980,8 @@ def sViewDestination():
 
 @app.route('/sRevenue')
 def sViewRevenue():
+	if 'username' not in session: 
+		return render_template('404.html')
 	username = session['username']
 	cursor = conn.cursor()
 	query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
